@@ -1,0 +1,22 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Begin</th>
+      <th>End</th>
+      <th>View</th>
+    </tr>
+  </thead>
+  <tbody>
+    {rows}
+      <tr>
+        <td>{id}</td>
+        <td>{name}</td>
+        <td>{begda}</td>
+        <td>{endda}</td>
+        <td>{viewlink}</td>
+      </tr>
+    {/rows}
+  </tbody>
+</table>
