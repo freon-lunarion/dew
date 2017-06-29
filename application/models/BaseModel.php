@@ -3,10 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class BaseModel extends CI_Model{
 
-  public $tblObj  = 'obj'; // table for defining object
-  public $tblAttr = 'obj_attribute'; // table for object name (attribute)
-  public $tblRel  = 'obj_rel'; // table for relation between object(s)
-
   public function __construct()
   {
     parent::__construct();
@@ -32,15 +28,34 @@ class BaseModel extends CI_Model{
       'begin_date' => $begin,
       'end_date'   => $end,
     );
-    $objId = $this->InsertOn($this->tblObj, $data);
+    $objId = $this->InsertOn($this->config->item('tblObj'), $data);
 
     $data = array(
       'obj_id'     => $objId,
-      'name'       => $name,
       'begin_date' => $begin,
       'end_date'   => $end,
     );
-    $this->InsertOn($this->tblAttr, $data);
+
+    if (is_array($name)) {
+      $data['name'] = $name['name'];
+
+      if (isset($name['short'])) {
+        $data['short_name'] = $name['short'];
+      } else if (isset($name['short_name'])) {
+        $data['short_name'] = $name['short_name'];
+      }
+
+      if (isset($name['desc'])) {
+        $data['description'] = $name['desc'];
+      } else if (isset($name['description'])) {
+        $data['description'] = $name['description'];
+      }
+
+    } else {
+      $data['name'] = $name;
+    }
+
+    $this->InsertOn($this->config->item('tblAttr'), $data);
     return $objId;
   }
 
@@ -79,39 +94,39 @@ class BaseModel extends CI_Model{
       'timestamp'  => date('Y-m-d H:i:s'),
     );
 
-    $this->ChangeOn($this->tblObj,$objId,$data);
+    $this->ChangeOn($this->config->item('tblObj'),$objId,$data);
     // Change date of Attribut
     $this->db->where('obj_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('begin_date ', $old->begin_date);
-    $this->db->update($this->tblAttr,$dataBegin);
+    $this->db->update($this->config->item('tblAttr'),$dataBegin);
 
     $this->db->where('obj_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblAttr,$dataEnd);
+    $this->db->update($this->config->item('tblAttr'),$dataEnd);
 
     // Change date of Relation TopDown
     $this->db->where('obj_top_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('begin_date ', $old->begin_date);
-    $this->db->update($this->tblRel, $dataBegin);
+    $this->db->update($this->config->item('tblRel'), $dataBegin);
 
     $this->db->where('obj_top_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblRel, $dataEnd);
+    $this->db->update($this->config->item('tblRel'), $dataEnd);
 
     // Change date of Relation BottomUp
     $this->db->where('obj_bottom_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('begin_date ', $old->begin_date);
-    $this->db->update($this->tblRel, $dataBegin);
+    $this->db->update($this->config->item('tblRel'), $dataBegin);
 
     $this->db->where('obj_bottom_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblRel, $dataEnd);
+    $this->db->update($this->config->item('tblRel'), $dataEnd);
   }
 
   /**
@@ -134,21 +149,21 @@ class BaseModel extends CI_Model{
     );
 
     // Delimit Object
-    $this->ChangeOn($this->tblObj,$objId,$data);
+    $this->ChangeOn($this->config->item('tblObj'),$objId,$data);
     $this->db->where('obj_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblAttr,$data);
+    $this->db->update($this->config->item('tblAttr'),$data);
 
     $this->db->where('obj_top_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblRel, $data);
+    $this->db->update($this->config->item('tblRel'), $data);
 
     $this->db->where('obj_bottom_id', $objId);
     $this->db->where('is_delete', FALSE);
     $this->db->where('end_date ', $old->end_date);
-    $this->db->update($this->tblRel, $data);
+    $this->db->update($this->config->item('tblRel'), $data);
   }
 
   /**
@@ -160,10 +175,10 @@ class BaseModel extends CI_Model{
 
   public function Delete($id=0)
   {
-    $this->DeleteOn($this->tblObj,$id);
-    $this->DeleteOn($this->tblAttr,$id,'obj_id');
-    $this->DeleteOn($this->tblRel,$id,'obj_top_id');
-    $this->DeleteOn($this->tblRel,$id,'obj_bottom_id');
+    $this->DeleteOn($this->config->item('tblObj'),$id);
+    $this->DeleteOn($this->config->item('tblAttr'),$id,'obj_id');
+    $this->DeleteOn($this->config->item('tblRel'),$id,'obj_top_id');
+    $this->DeleteOn($this->config->item('tblRel'),$id,'obj_bottom_id');
   }
 
 
@@ -178,7 +193,7 @@ class BaseModel extends CI_Model{
   {
     $this->db->where('is_delete', 0);
     $this->db->where('id', $id);
-    return $this->db->get($this->tblObj, 1, 0)->row();
+    return $this->db->get($this->config->item('tblObj'), 1, 0)->row();
   }
 
   /**
@@ -198,7 +213,7 @@ class BaseModel extends CI_Model{
     $this->db->select('sub.name');
     $this->db->where('sub.is_delete', FALSE);
     $this->db->where('sub.obj_id = obj.id');
-    $this->db->from($this->tblAttr .' sub');
+    $this->db->from($this->config->item('tblAttr') .' sub');
     $this->db->order_by('end_date','desc');
     $this->db->limit(1,0);
     if (!is_array($keydate)) {
@@ -258,7 +273,7 @@ class BaseModel extends CI_Model{
       $this->db->group_end();
     }
 
-    return $this->db->get($this->tblObj)->result();
+    return $this->db->get($this->config->item('tblObj'))->result();
   }
 
   /**
@@ -277,8 +292,8 @@ class BaseModel extends CI_Model{
     $this->db->select('obj.begin_date');
     $this->db->select('obj.end_date');
     $this->db->select('attr.name');
-    $this->db->from($this->tblAttr .' attr');
-    $this->db->join($this->tblObj . ' obj', 'attr.obj_id = obj.id');
+    $this->db->from($this->config->item('tblAttr') .' attr');
+    $this->db->join($this->config->item('tblObj') . ' obj', 'attr.obj_id = obj.id');
     $this->db->where('attr.is_delete', 0);
     $this->db->where('obj.is_delete', 0);
     $this->db->like('LOWER(attr.name)', $name);
@@ -349,37 +364,7 @@ class BaseModel extends CI_Model{
 
   public function GetLastAttr($objId=0,$keydate='')
   {
-    $this->db->where('obj_id', $objId);
-    $this->db->where('is_delete', FALSE);
-
-    if (!is_array($keydate)) {
-      if ($keydate == '') {
-        $keydate = date('Y-m-d');
-      }
-      $this->db->where('begin_date <=', $keydate);
-      $this->db->where('end_date >=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('begin_date >=', $keydate['begin']);
-          $this->db->where('end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('end_date >=', $keydate['begin']);
-          $this->db->where('end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('begin_date >=', $keydate['begin']);
-          $this->db->where('begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('begin_date <=', $keydate['begin']);
-          $this->db->where('end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
-    }
-    $this->db->order_by('end_date','desc');
-    return $this->db->get($this->tblAttr)->row();
+    return $this->GetLastOn($this->config->item('tblAttr'),$objId,'obj_id',$keydate);
   }
 
   /**
@@ -423,7 +408,7 @@ class BaseModel extends CI_Model{
 
     }
     $this->db->order_by('end_date',$sort);
-    return $this->db->get($this->tblAttr)->result();
+    return $this->db->get($this->config->item('tblAttr'))->result();
   }
 
   /**
@@ -445,21 +430,41 @@ class BaseModel extends CI_Model{
     $this->db->select('id');
     $this->db->where('obj_id', $objId);
     $this->db->order_by('end_date','desc');
-    $row    = $this->db->get($this->tblAttr)->row();
+    $row    = $this->db->get($this->config->item('tblAttr'))->row();
 
     $attId    = $row->id;
     $data     = array(
       'end_date' => date('Y-m-d',strtotime($validOn . '-1 days')),
     );
-    $this->ChangeOn($this->tblAttr,$attId,$data);
+    $this->ChangeOn($this->config->item('tblAttr'),$attId,$data);
 
     $data = array(
       'obj_id'     => $objId,
-      'name'       => $newName,
       'begin_date' => $validOn,
       'end_date'   => $endDate,
     );
-    $this->InsertOn($this->tblAttr,$data);
+
+    if (is_array($newName)) {
+      $data['name']       = $newName['name'];
+
+      if (isset($newName['short'])) {
+        $data['short_name'] = $newName['short'];
+      } else if (isset($newName['short_name'])) {
+        $data['short_name'] = $newName['short_name'];
+      }
+
+      if (isset($newName['desc'])) {
+        $data['description'] = $newName['desc'];
+      } else if (isset($newName['description'])) {
+        $data['description'] = $newName['description'];
+
+      }
+
+    } else {
+      $data['name'] = $newName;
+    }
+
+    $this->InsertOn($this->config->item('tblAttr'),$data);
   }
   // ---------------------------------------------------------------------------
 
@@ -484,7 +489,7 @@ class BaseModel extends CI_Model{
       'begin_date'    => $begin,
       'end_date'      => $end,
     );
-    $objId = $this->InsertOn($this->tblRel, $data);
+    $objId = $this->InsertOn($this->config->item('tblRel'), $data);
   }
 
   /**
@@ -517,12 +522,12 @@ class BaseModel extends CI_Model{
     }
     $this->db->where('is_delete', FALSE);
     $this->db->order_by('end_date');
-    $relId = $this->db->get($this->tblRel, 1, 0)->row()->id; // get id of relation
+    $relId = $this->db->get($this->config->item('tblRel'), 1, 0)->row()->id; // get id of relation
 
     $data     = array(
       'end_date' => date('Y-m-d',strtotime($validOn . '-1 days')), // set end date of old relation, 1 day before new relation begin
     );
-    $this->ChangeOn($this->tblRel,$relId,$data); // change end date of relation by relation id
+    $this->ChangeOn($this->config->item('tblRel'),$relId,$data); // change end date of relation by relation id
 
     if ($newId == TRUE && $newId !='' && $newId > 0) {
       switch (strtoupper($mode)) {
@@ -545,7 +550,7 @@ class BaseModel extends CI_Model{
         );
         break;
       }
-      $this->InsertOn($this->tblRel,$data); //create new relation
+      $this->InsertOn($this->config->item('tblRel'),$data); //create new relation
     }
   }
 
@@ -565,7 +570,7 @@ class BaseModel extends CI_Model{
       'end_date'   => $endDate,
     );
 
-    $this->ChangeOn($this->tblRel,$relId,$data);
+    $this->ChangeOn($this->config->item('tblRel'),$relId,$data);
   }
 
   /**
@@ -578,7 +583,7 @@ class BaseModel extends CI_Model{
 
   public function DelimitRel($relId=0,$endDate='')
   {
-    $this->DelimitOn($this->tblRel,$relId,$endDate);
+    $this->DelimitOn($this->config->item('tblRel'),$relId,$endDate);
   }
 
   /**
@@ -590,13 +595,13 @@ class BaseModel extends CI_Model{
 
   public function DeleteRel($relId=0)
   {
-    $this->DeleteOn($this->tblRel,$relId);
+    $this->DeleteOn($this->config->item('tblRel'),$relId);
   }
 
   public function GetRelById($relId=0)
   {
     $this->db->where('id', $relId);
-    $this->db->from($this->tblRel);
+    $this->db->from($this->config->item('tblRel'));
     return $this->db->get()->row();
   }
   // ---------------------------------------------------------------------------
@@ -608,14 +613,14 @@ class BaseModel extends CI_Model{
       $keydate = date('Y-m-d');
     }
     $this->db->select('COUNT(rel_0.id) as val');
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_top_id', $topObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
         }
       }
 
@@ -703,7 +708,7 @@ class BaseModel extends CI_Model{
     $this->db->select('sub.name');
     $this->db->where('sub.is_delete', FALSE);
     $this->db->where('sub.obj_id = rel_NUM.obj_bottom_id');
-    $this->db->from($this->tblAttr .' sub');
+    $this->db->from($this->config->item('tblAttr') .' sub');
     $this->db->order_by('end_date','desc');
     $this->db->limit(1,0);
     if (!is_array($keydate)) {
@@ -731,7 +736,7 @@ class BaseModel extends CI_Model{
     }
     $subQuery = $this->db->get_compiled_select();
     // END OF Sub Query 1
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_top_id', $topObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
@@ -757,7 +762,7 @@ class BaseModel extends CI_Model{
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
         }
       }
 
@@ -862,7 +867,7 @@ class BaseModel extends CI_Model{
     $this->db->select('sub.name');
     $this->db->where('sub.is_delete', FALSE);
     $this->db->where('sub.obj_id = rel_NUM.obj_bottom_id');
-    $this->db->from($this->tblAttr .' sub');
+    $this->db->from($this->config->item('tblAttr') .' sub');
     $this->db->order_by('end_date','desc');
     $this->db->limit(1,0);
     if (!is_array($keydate)) {
@@ -890,7 +895,7 @@ class BaseModel extends CI_Model{
     }
     $subQuery = $this->db->get_compiled_select();
     // END OF Sub Query 1
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_top_id', $topObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
@@ -915,7 +920,7 @@ class BaseModel extends CI_Model{
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_bottom_id = rel_'.$i.'.obj_top_id');
         }
       }
 
@@ -1015,14 +1020,14 @@ class BaseModel extends CI_Model{
       $keydate = date('Y-m-d');
     }
     $this->db->select('COUNT(rel_0.id) as val');
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_bottom_id', $botObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
         }
       }
 
@@ -1107,7 +1112,7 @@ class BaseModel extends CI_Model{
     $this->db->select('sub.name');
     $this->db->where('sub.is_delete', FALSE);
     $this->db->where('sub.obj_id = rel_NUM.obj_top_id');
-    $this->db->from($this->tblAttr .' sub');
+    $this->db->from($this->config->item('tblAttr') .' sub');
     $this->db->order_by('end_date','desc');
     $this->db->limit(1,0);
     if (!is_array($keydate)) {
@@ -1135,7 +1140,7 @@ class BaseModel extends CI_Model{
     }
     $subQuery = $this->db->get_compiled_select();
     // END OF Sub Query 1
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_bottom_id', $botObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
@@ -1161,7 +1166,7 @@ class BaseModel extends CI_Model{
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
         }
       }
 
@@ -1266,7 +1271,7 @@ class BaseModel extends CI_Model{
     $this->db->select('sub.name');
     $this->db->where('sub.is_delete', FALSE);
     $this->db->where('sub.obj_id = rel_NUM.obj_top_id');
-    $this->db->from($this->tblAttr .' sub');
+    $this->db->from($this->config->item('tblAttr') .' sub');
     $this->db->order_by('end_date','desc');
     $this->db->limit(1,0);
     if (!is_array($keydate)) {
@@ -1294,7 +1299,7 @@ class BaseModel extends CI_Model{
     }
     $subQuery = $this->db->get_compiled_select();
     // END OF Sub Query 1
-    $this->db->from($this->BaseModel->tblRel .' AS rel_0');
+    $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_bottom_id', $botObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
@@ -1321,7 +1326,7 @@ class BaseModel extends CI_Model{
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
-          $this->db->join($this->BaseModel->tblRel .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
+          $this->db->join($this->config->item('tblRel') .' AS rel_'.$i,'rel_'.$j.'.obj_top_id = rel_'.$i.'.obj_bottom_id');
         }
       }
 
@@ -1505,6 +1510,41 @@ class BaseModel extends CI_Model{
       $this->db->where($field, $id);
     }
     $this->db->update($tbl, $data);
+  }
+
+  public function GetLastOn($tbl='',$id=0,$field='obj_id',$keydate='')
+  {
+    $this->db->where($field, $id);
+    $this->db->where('is_delete', FALSE);
+
+    if (!is_array($keydate)) {
+      if ($keydate == '') {
+        $keydate = date('Y-m-d');
+      }
+      $this->db->where('begin_date <=', $keydate);
+      $this->db->where('end_date >=', $keydate);
+    } else {
+      $this->db->group_start();
+        $this->db->group_start();
+          $this->db->where('begin_date >=', $keydate['begin']);
+          $this->db->where('end_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('end_date >=', $keydate['begin']);
+          $this->db->where('end_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('begin_date >=', $keydate['begin']);
+          $this->db->where('begin_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('begin_date <=', $keydate['begin']);
+          $this->db->where('end_date >=', $keydate['end']);
+        $this->db->group_end();
+      $this->db->group_end();
+    }
+    $this->db->order_by('end_date','desc');
+    return $this->db->get($tbl)->row();
   }
   // ---------------------------------------------------------------------------
 

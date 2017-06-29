@@ -3,22 +3,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class EmpModel extends CI_Model{
 
-  private $objType   = 'EMP';
-  // Relation Code (Ref to ref_obj_rel)
-  private $relStruct = '111';
-  private $relReport = '112';
-
-  private $relAssign = '121';
-  private $relChief  = '122';
-
-  private $relHold   = '131';
-  private $relJob    = '141';
+  private $objType;
+  private $relStruct;
+  private $relReport;
+  private $relAssign;
+  private $relChief;
+  private $relHold;
+  private $relJob;
 
   public function __construct()
   {
     parent::__construct();
     //Codeigniter : Write Less Do More
     $this->load->model('BaseModel');
+    $this->objType   = $this->config->item('objEmployee');
+
+    $this->relStruct = $this->config->item('relStruct');
+    $this->relReport = $this->config->item('relReport');
+    $this->relAssign = $this->config->item('relAssign');
+    $this->relChief  = $this->config->item('relChief');
+    $this->relHold   = $this->config->item('relHold');
+    $this->relJob    = $this->config->item('relJob');
   }
 
   public function AddPost($persId=0,$postId=0,$beginDate='',$endDate='9999-12-31')

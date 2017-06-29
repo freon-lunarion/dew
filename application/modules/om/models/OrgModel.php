@@ -3,23 +3,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class OrgModel extends CI_Model{
 
-  private $objType   = 'ORG';
-  // Relation Code (Ref to ref_obj_rel)
-  private $relStruct = '111';
-  private $relReport = '112';
-
-  private $relAssign = '121';
-  private $relChief  = '122';
-
-  private $relHold   = '131';
-  private $relJob    = '141';
+  private $objType;
+  private $relStruct;
+  private $relReport;
+  private $relAssign;
+  private $relChief;
+  private $relHold;
+  private $relJob;
 
   public function __construct()
   {
     parent::__construct();
     $this->load->model('BaseModel');
 
-    //Codeigniter : Write Less Do More
+    $this->objType   = $this->config->item('objOrg');
+    $this->relStruct = $this->config->item('relStruct');
+    $this->relReport = $this->config->item('relReport');
+    $this->relAssign = $this->config->item('relAssign');
+    $this->relChief  = $this->config->item('relChief');
+    $this->relHold   = $this->config->item('relHold');
+    $this->relJob    = $this->config->item('relJob');
   }
 
   public function ChangeChiefPost($orgId,$newPost=0,$validOn='',$endDate='9999-12-31')

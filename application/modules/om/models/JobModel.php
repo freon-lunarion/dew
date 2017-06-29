@@ -3,42 +3,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class JobModel extends CI_Model{
 
-  private $objType   = 'JOB';
-  // Relation Code (Ref to ref_obj_rel)
-  private $relStruct = '111';
-  private $relReport = '112';
-
-  private $relAssign = '121';
-  private $relChief  = '122';
-
-  private $relHold   = '131';
-  private $relJob    = '141';
+  private $objType;
+  private $relStruct;
+  private $relReport;
+  private $relAssign;
+  private $relChief;
+  private $relHold;
+  private $relJob;
 
   public function __construct()
   {
     parent::__construct();
     $this->load->model('BaseModel');
-  }
 
-  public function ChangeName($objId=0,$newName='',$validOn='',$endDate='9999-12-31')
-  {
-    $this->BaseModel->ChangeAttr($objId,$newName,$validOn,$endDate);
-  }
-
-  public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
-  {
-    $this->BaseModel->ChangeRelDate($relId,$beginDate,$endDate);
-  }
-
-  public function CountRelatedPerson($objId=0,$keyDate='')
-  {
-    $relCode = array($this->relJob,$this->relHold);
-    return $this->BaseModel->CountTopDownRel($objId,$relCode,$keyDate);
-  }
-
-  public function CountRelatedPost($objId=0,$keyDate='')
-  {
-    return $this->BaseModel->CountTopDownRel($objId,$this->relJob,$keyDate);
+    $this->objType   = $this->config->item('objJob');
+    $this->relStruct = $this->config->item('relStruct');
+    $this->relReport = $this->config->item('relReport');
+    $this->relAssign = $this->config->item('relAssign');
+    $this->relChief  = $this->config->item('relChief');
+    $this->relHold   = $this->config->item('relHold');
+    $this->relJob    = $this->config->item('relJob');
   }
 
   public function Create($name='',$beginDate='1990-01-01',$endDate='9999-12-31')
@@ -51,14 +35,30 @@ class JobModel extends CI_Model{
     $this->BaseModel->Delete($objId);
   }
 
-  public function DeleteRel($relId=0)
-  {
-    $this->BaseModel->DeleteRel($relId);
-  }
-
   public function Delimit($objId=0,$endDate='')
   {
     $this->BaseModel->Delimit($objId,$endDate);
+  }
+
+  public function ChangeName($objId=0,$newName='',$validOn='',$endDate='9999-12-31')
+  {
+    $this->BaseModel->ChangeAttr($objId,$newName,$validOn,$endDate);
+  }
+
+  public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
+  {
+    $this->BaseModel->ChangeRelDate($relId,$beginDate,$endDate);
+  }
+
+
+  public function CountRelatedPost($objId=0,$keyDate='')
+  {
+    return $this->BaseModel->CountTopDownRel($objId,$this->relJob,$keyDate);
+  }
+
+  public function DeleteRel($relId=0)
+  {
+    $this->BaseModel->DeleteRel($relId);
   }
 
   public function GetByIdRow($id=0)
@@ -86,13 +86,6 @@ class JobModel extends CI_Model{
   public function GetRelByIdRow($relId=0)
   {
     return $this->BaseModel->GetRelById($relId);
-  }
-
-  public function GetRelatedPersonList($objId=0,$keyDate='')
-  {
-    $relCode = array($this->relJob,$this->relHold);
-    $alias   = array('post','person');
-    return $this->BaseModel->GetTopDownRelList($objId,$relCode,$keyDate,$alias);
   }
 
   public function GetRelatedPostList($objId=0,$keyDate='')
