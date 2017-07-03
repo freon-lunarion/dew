@@ -67,7 +67,7 @@ class PerspectiveModel extends CI_Model{
 
   public function CountSo($perspId = 0, $keyDate = '')
   {
-    return $this->BaseModel->CountBotUpRel($objId,$this->config->item('relSoPer'),$keyDate);
+    return $this->BaseModel->CountBotUpRel($perspId,$this->config->item('relSoPer'),$keyDate);
   }
 
   public function GetSoList($perspId = 0 ,$keyDate = '')

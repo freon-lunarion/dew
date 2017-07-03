@@ -111,4 +111,14 @@ class MeasurementModel extends CI_Model{
     return $this->BaseModel->GetAttrList($measId,$keyDate,$sort);
   }
 
+  public function CountKpi($measurementId=0, $keyDate = '')
+  {
+    
+  }
+
+  public function GetKpiList($measurementId=0, $keyDate = '')
+  {
+
+  }
+
 }
