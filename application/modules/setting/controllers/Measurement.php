@@ -9,7 +9,7 @@ class Measurement extends CI_Controller{
     parent::__construct();
     $this->load->model('MeasurementModel','MainModel');
     $this->load->library('parser');
-    $this->load->helper(array('html','url','security'));
+    
 
   }
 

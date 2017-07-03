@@ -11,7 +11,7 @@ class Org extends CI_Controller{
     parent::__construct();
     $this->load->model('OrgModel');
     $this->load->library('parser');
-    $this->load->helper(array('html','url','security'));
+    
 
   }
 

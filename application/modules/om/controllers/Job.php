@@ -10,9 +10,7 @@ class Job extends CI_Controller{
     parent::__construct();
     $this->load->model('JobModel'); // BaseModel is included
     $this->load->library('parser');
-    $this->load->helper(array('html','url','security'));
-
-
+    
   }
 
   function index()
@@ -151,7 +149,7 @@ class Job extends CI_Controller{
   public function EditRel($relId=0)
   {
     $this->load->helper('form');
-    
+
     $data['hidden']  = array(
       'rel_id' => $relId
     );

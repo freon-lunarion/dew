@@ -10,7 +10,7 @@ class Emp extends CI_Controller{
     parent::__construct();
     $this->load->model('EmpModel'); // BaseModel is included
     $this->load->library('parser');
-    $this->load->helper(array('html','url','security'));
+    
 
   }
 

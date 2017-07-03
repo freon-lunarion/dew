@@ -10,7 +10,7 @@ class Formula extends CI_Controller{
     parent::__construct();
     $this->load->model('FormulaModel','Mainmodel');
     $this->load->library('parser');
-    $this->load->helper(array('html','url','security'));
+    
   }
 
   function index()
