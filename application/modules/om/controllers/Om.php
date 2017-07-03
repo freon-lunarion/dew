@@ -20,7 +20,7 @@ class Om extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->helper(array('html','url'));
+		
 
 		$this->load->view('home_view');
 	}
