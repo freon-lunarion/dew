@@ -1,6 +1,6 @@
 <?php $this->load->view('_base/top');?>
 <?php echo anchor($backLink,'Back','class="btn btn-default"');?>
-<h1 class="page-header">Job <small>View</small></h1>
+<h1 class="page-header">Perspective <small>View</small></h1>
 <?php $this->load->view('_element/rangedate_filter'); ?>
 
 <div class="refresh_target" data-ajax="{ajaxUrl1}"></div>

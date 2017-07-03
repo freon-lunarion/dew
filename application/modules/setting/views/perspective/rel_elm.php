@@ -1,4 +1,4 @@
-<h2>Related Position</h2>
+<h2>Related Strategic Objective</h2>
 
 <table class="table table-striped table-hover">
   <thead>
@@ -12,16 +12,16 @@
     </tr>
   </thead>
   <tbody>
-    {post}
+    {so}
       <tr class="{historyRow}">
-        <td>{postBegin}</td>
-        <td>{postEnd}</td>
+        <td>{soBegin}</td>
+        <td>{soEnd}</td>
         <td><a href="{chgRel}" class="btn btn-link" title="Change Date">Chg. Date</a>
-        <td><a href="{viewPost}" class="btn btn-link" title="View Position">{postId}</a></td>
-        <td><a href="{viewPost}" class="btn btn-link" title="View Position">{postName}</a></td>
+        <td><a href="{viewRel}" class="btn btn-link" title="View Position">{soId}</a></td>
+        <td><a href="{viewRel}" class="btn btn-link" title="View Position">{soName}</a></td>
         <td><a href="{remRel}" class="btn btn-link btn-delete" title="Change Date">Delete</a>
           </td>
       </tr>
-    {/post}
+    {/so}
   </tbody>
 </table>

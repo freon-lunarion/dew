@@ -221,7 +221,7 @@ class Perspective extends CI_Controller{
       $data['objDescr'] = $attr->description;
     }
     $this->parser->parse('_element/obj_detail',$data);
-    
+
     $ls = $this->MainModel->GetNameHistoryList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
@@ -269,10 +269,12 @@ class Perspective extends CI_Controller{
         'soName'   => $row->so_name,
         'chgRel'   => $delimit.$row->so_rel_id,
         'remRel'   => $remove.$row->so_rel_id,
-        'viewPost' => site_url('Post/View/'.$row->so_id),
+        'viewRel' => site_url('So/View/'.$row->so_id),
       );
     }
     $data['so'] = $rel;
+    $this->parser->parse($this->viewDir . 'rel_elm',$data);
+
   }
 
 }
