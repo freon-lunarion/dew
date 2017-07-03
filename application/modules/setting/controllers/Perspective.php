@@ -3,12 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Perspective extends CI_Controller{
   private $viewDir   = 'perspective/';
-  private $selfCtrl  = 'setting/Perspective/';
+  private $selfCtrl  = 'Setting/Perspective/';
   public function __construct()
   {
     parent::__construct();
     $this->load->model('PerspectiveModel', 'MainModel');
     $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
 
   }
 
@@ -60,6 +61,7 @@ class Perspective extends CI_Controller{
 
   public function Add()
   {
+    $this->load->helper('form');
     $data = array(
       'cancelLink' => $this->selfCtrl,
       'process'    => $this->selfCtrl.'AddProcess',

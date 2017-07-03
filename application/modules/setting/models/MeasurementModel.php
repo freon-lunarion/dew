@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class MeasureModel extends CI_Model{
+class MeasurementModel extends CI_Model{
 
   private $objType;
   private $tbl;

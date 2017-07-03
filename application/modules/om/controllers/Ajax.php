@@ -13,25 +13,6 @@ class Ajax extends CI_Controller{
   {
 
   }
-  /**
-   * [Set (Range) Date Filter in session]
-   * [Memasang filter tanggal di session]
-   * @method SetFilterDate
-   */
-
-  public function SetFilterDate()
-  {
-    $begin = $this->input->post('begDa');
-    if ($this->input->post('begDa') == '') {
-      $begin = date('Y-m-d');
-    }
-    $end   = $this->input->post('endDa');
-    if ($this->input->post('endDa') == '') {
-      $end = date('Y-m-d');
-    }
-    $this->session->set_userdata('filterBegDa',$begin);
-    $this->session->set_userdata('filterEndDa',$end);
-  }
 
   /**
    * [Show Organization Structure Selection on Dialog/ Modal Box]
@@ -42,6 +23,8 @@ class Ajax extends CI_Controller{
   public function ShowOrgStrucSelection()
   {
     $this->load->model('OrgModel');
+    $this->load->library('parser');
+
     $orgId = $this->input->post('id');
     $mode  = strtolower($this->input->post('mode')); // [org,post]
     if (!$this->session->userdata('filterBegDa') || !$this->session->userdata('filterEndDa')) {
@@ -76,11 +59,13 @@ class Ajax extends CI_Controller{
     // Children of Organization
     if ($orgId ==0 ) {
       $row = $this->OrgModel->GetByIdRow(1,$date);
+      $name = $this->OrgModel->GetLastName(1,$date);
       $data['org'][0] = array(
         'id'    => $row->id,
         'begda' => $row->begin_date,
         'endda' => $row->end_date,
-        'name'  => $this->OrgModel->GetLastName(1,$date)->name,
+        'name'  => $name->name,
+        'short' => $name->short_name,
       );
 
 
@@ -94,6 +79,8 @@ class Ajax extends CI_Controller{
           'begda' => $row->child_begin_date,
           'endda' => $row->child_end_date,
           'name'  => $row->child_name,
+          'short' => $row->child_short_name,
+
         );
         $i++;
       }
@@ -115,6 +102,7 @@ class Ajax extends CI_Controller{
           $data['post'][$i] = array(
             'id'    => $row->post_id,
             'name'  => $row->post_name,
+            'short' => $row->post_short_name,
             'begda' => $row->post_begin_date,
             'endda' => $row->post_end_date,
           );
@@ -129,6 +117,7 @@ class Ajax extends CI_Controller{
   public function ShowEmployeeSelection()
   {
     $this->load->model(array('PersModel'));
+    $this->load->library('parser');
 
     $query = $this->input->post('query');
 

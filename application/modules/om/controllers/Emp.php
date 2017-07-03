@@ -10,6 +10,8 @@ class Emp extends CI_Controller{
     parent::__construct();
     $this->load->model('EmpModel'); // BaseModel is included
     $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
+
   }
 
   function index()
@@ -58,6 +60,8 @@ class Emp extends CI_Controller{
 
   public function Add()
   {
+    $this->load->helper('form');
+
     $this->load->model('PostModel');
     $ls    = $this->PostModel->GetList(date('Y-m-d'),date('Y-m-d'));
     $post  = array(''=>'');
@@ -74,6 +78,8 @@ class Emp extends CI_Controller{
 
   public function AddPost()
   {
+    $this->load->helper('form');
+
     $this->load->model('PostModel');
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
@@ -123,6 +129,8 @@ class Emp extends CI_Controller{
 
   public function EditDate()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -148,6 +156,8 @@ class Emp extends CI_Controller{
 
   public function EditName()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -172,6 +182,8 @@ class Emp extends CI_Controller{
 
   public function EditRel($relId=0)
   {
+    $this->load->helper('form');
+    
     $data['hidden']  = array(
       'rel_id' => $relId
     );

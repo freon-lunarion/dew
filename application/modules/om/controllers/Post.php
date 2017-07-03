@@ -11,6 +11,7 @@ class Post extends CI_Controller{
     parent::__construct();
     $this->load->model('PostModel');
     $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
 
   }
 
@@ -50,6 +51,7 @@ class Post extends CI_Controller{
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
         'name'     => $row->name,
+        'short'    => $row->short_name,
         'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
       );
       $data['rows'][$i] = $temp;
@@ -61,7 +63,8 @@ class Post extends CI_Controller{
 
   public function Add()
   {
-    $this->load->model(array('OrgModel','JobModel','PersModel'));
+    $this->load->helper('form');
+    $this->load->model(array('OrgModel','JobModel','EmpModel'));
     $begin  = $this->session->userdata('filterBegDa');
     $end    = $this->session->userdata('filterEndDa');
     if (is_null($begin) OR $begin == '') {
@@ -77,7 +80,7 @@ class Post extends CI_Controller{
       $job[$row->id] = $row->id.' - '.$row->name;
     }
 
-    $ls  = $this->PersModel->GetList($begin,$end);
+    $ls  = $this->EmpModel->GetList($begin,$end);
     $emp = array(''=>'');
     foreach ($ls as $row) {
       $emp[$row->id] = $row->id.' - '.$row->name;
@@ -125,6 +128,8 @@ class Post extends CI_Controller{
   }
   public function EditAssignment()
   {
+    $this->load->helper('form');
+
     $this->load->model(array('OrgModel'));
     $id     = $this->session->userdata('selectId');
     $begin  = $this->session->userdata('filterBegDa');
@@ -152,6 +157,8 @@ class Post extends CI_Controller{
 
   public function EditDate()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -177,6 +184,8 @@ class Post extends CI_Controller{
 
   public function EditHolder()
   {
+    $this->load->helper('form');
+
     $this->load->model('PersModel');
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
@@ -219,6 +228,8 @@ class Post extends CI_Controller{
 
   public function EditJob()
   {
+    $this->load->helper('form');
+
     $this->load->model('JobModel');
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
@@ -258,6 +269,8 @@ class Post extends CI_Controller{
 
   public function EditManaging()
   {
+    $this->load->helper('form');
+
     $this->load->model(array('OrgModel'));
     $id     = $this->session->userdata('selectId');
     $begin  = $this->session->userdata('filterBegDa');
@@ -291,6 +304,8 @@ class Post extends CI_Controller{
 
   public function EditName()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -298,6 +313,7 @@ class Post extends CI_Controller{
     $old                = $this->PostModel->GetLastName($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
+    $data['short']      = $old->short_name;
     $data['cancelLink'] = $this->selfCtrl.'View/';
     $data['process']    = $this->selfCtrl.'EditNameProcess';
     $this->load->view($this->viewDir.'name_form', $data);
@@ -315,6 +331,8 @@ class Post extends CI_Controller{
 
   public function EditRel($relId=0)
   {
+    $this->load->helper('form');
+
     $data['hidden']  = array(
       'rel_id' => $relId
     );
@@ -338,6 +356,8 @@ class Post extends CI_Controller{
 
   public function EditSupervisor()
   {
+    $this->load->helper('form');
+
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');

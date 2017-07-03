@@ -10,7 +10,7 @@ $('#btn_date_refresh').on('click', function(event) {
   var begDa = form.children('#dt_begin').val();
   var endDa = form.children('#dt_end').val();
   $.ajax({
-    url: siteUrl+'/Om/Ajax/SetFilterDate/',
+    url: siteUrl+'/Ajax/SetFilterDate/',
     type: 'POST',
     data: {begDa: begDa, endDa:endDa}
   })

@@ -8,7 +8,9 @@ class Formula extends CI_Controller{
   public function __construct()
   {
     parent::__construct();
-    $this->load->model('FormulaModel');
+    $this->load->model('FormulaModel','Mainmodel');
+    $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
   }
 
   function index()

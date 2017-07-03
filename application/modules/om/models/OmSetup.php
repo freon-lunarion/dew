@@ -119,30 +119,37 @@ class OmSetup extends CI_Model{
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Business Division',
+        'short' => 'BIZ',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Support Division',
+        'short' => 'SUP',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Production Department',
+        'short' => 'PD',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Sales & Marketing Department',
+        'short' => 'SMD',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Finance Department',
+        'short' => 'FID',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Human Resources Department',
+        'short' => 'HRD',
       ),
       array(
         'type' => $this->config->item('objOrg'),
         'name' => 'Facility Department',
+        'short' => '',
       ),
       array(
         'type' => $this->config->item('objJob'),
@@ -496,6 +503,9 @@ class OmSetup extends CI_Model{
         'end_date'    => $end,
         'create_time' => date('Y-m-d H:i:s'),
       );
+      if (isset($row['short'])) {
+        $data['short_name'] = $row['short'];
+      }
       $this->db->insert($this->config->item('tblAttr'), $data);
 
     }

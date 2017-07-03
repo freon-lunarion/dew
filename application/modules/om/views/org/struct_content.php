@@ -7,6 +7,7 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Short</th>
       <th>Name</th>
       <th>Begin</th>
       <th>End</th>
@@ -18,6 +19,7 @@
     {rows}
       <tr >
         <td>{id}</td>
+        <td>{short}</td>
         <td>{name}</td>
         <td>{begda}</td>
         <td>{endda}</td>

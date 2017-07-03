@@ -20,6 +20,7 @@
       <tr >
         <td>{id}</td>
         <td>{short}</td>
+        <td>{name}</td>
         <td>{begda}</td>
         <td>{endda}</td>
         <td><a href="#" class="btn btn-link nav-open" data-id="{id}">Open</a></td>

@@ -11,6 +11,7 @@ class Org extends CI_Controller{
     parent::__construct();
     $this->load->model('OrgModel');
     $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
 
   }
 
@@ -39,6 +40,8 @@ class Org extends CI_Controller{
 
   public function Add()
   {
+    $this->load->helper('form');
+
     $begin  = $this->session->userdata('filterBegDa');
     $end    = $this->session->userdata('filterEndDa');
     if (is_null($begin) OR $begin == '') {
@@ -72,6 +75,8 @@ class Org extends CI_Controller{
 
   public function EditChief()
   {
+    $this->load->helper('form');
+
     $this->load->model('PostModel');
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
@@ -104,6 +109,8 @@ class Org extends CI_Controller{
 
   public function EditDate()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -129,6 +136,8 @@ class Org extends CI_Controller{
 
   public function EditName()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -155,6 +164,8 @@ class Org extends CI_Controller{
 
   public function EditParent()
   {
+    $this->load->helper('form');
+
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
@@ -181,6 +192,8 @@ class Org extends CI_Controller{
 
   public function EditRel($relId=0)
   {
+    $this->load->helper('form');
+
     $data['hidden']  = array(
       'rel_id' => $relId
     );
@@ -324,7 +337,7 @@ class Org extends CI_Controller{
           'begda'    => $row->child_begin_date,
           'endda'    => $row->child_end_date,
           'name'     => $row->child_name,
-          'name'     => $row->child_short_name,
+          'short'    => $row->child_short_name,
           'viewlink' => anchor($this->selfCtrl.'View/'.$row->child_id,'View','class="btn btn-link" title="view"'),
         );
         $data['rows'][$i] = $temp;
@@ -339,7 +352,7 @@ class Org extends CI_Controller{
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
         'name'     => $name->name,
-        'name'     => $name->short_name,
+        'short'    => $name->short_name,
         'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
       );
     }

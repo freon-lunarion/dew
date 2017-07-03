@@ -35,7 +35,7 @@
   });
 
   function StructOrgPost(id) {
-    var ajaxUrl = siteUrl + '/Ajax/ShowOrgStrucSelection' ;
+    var ajaxUrl = siteUrl + '/Om/Ajax/ShowOrgStrucSelection' ;
     $.ajax({
       url: ajaxUrl,
       type: 'POST',

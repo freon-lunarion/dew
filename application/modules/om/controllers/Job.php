@@ -10,6 +10,8 @@ class Job extends CI_Controller{
     parent::__construct();
     $this->load->model('JobModel'); // BaseModel is included
     $this->load->library('parser');
+    $this->load->helper(array('html','url','security'));
+
 
   }
 
@@ -59,6 +61,8 @@ class Job extends CI_Controller{
 
   public function Add()
   {
+    $this->load->helper('form');
+
     $data['cancelLink'] = $this->selfCtrl;
     $data['process'] = $this->selfCtrl.'AddProcess';
     $this->load->view($this->viewDir.'add_form',$data);
@@ -91,6 +95,8 @@ class Job extends CI_Controller{
 
   public function EditDate()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -116,6 +122,8 @@ class Job extends CI_Controller{
 
   public function EditName()
   {
+    $this->load->helper('form');
+
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -142,6 +150,8 @@ class Job extends CI_Controller{
 
   public function EditRel($relId=0)
   {
+    $this->load->helper('form');
+    
     $data['hidden']  = array(
       'rel_id' => $relId
     );

@@ -31,7 +31,7 @@
 
     {post}
       <tr >
-        <td><i class="glyphicon glyphicon-pawn" title="Position"></i></td>
+        <td><i class="fa fa-user-circle" title="Position"></i></td>
         <td>{id}</td>
         <td>{short}</td>
         <td>{name}</td>
