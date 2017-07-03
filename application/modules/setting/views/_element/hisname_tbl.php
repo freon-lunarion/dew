@@ -23,8 +23,8 @@
             <tr class="{historyRow}">
               <td>{historyBegin}</td>
               <td>{historyEnd}</td>
-              <td>{historyShort}</td>
               <td>{historyName}</td>
+              <td>{historyShort}</td>
             </tr>
             {/history}
           </tbody>

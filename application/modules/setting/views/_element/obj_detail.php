@@ -6,5 +6,6 @@
   <dd>{objShort}</dd>
   <dt>Name</dt>
   <dd>{objName}<?php echo anchor($editName,'Change','class="btn btn-link" title="Change Name"'); ?></dd>
-
+  <dt>Description</dt>
+  <dd>{objDescr}</dd>
 </dl>

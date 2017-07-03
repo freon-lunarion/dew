@@ -30,9 +30,13 @@ class OrgModel extends CI_Model{
     $this->BaseModel->ChangeRel('TOPDOWN',$this->relChief,$orgId,$newPost,$validOn,$endDate);
   }
 
-  public function ChangeName($orgId=0,$newName='',$validOn='',$endDate='9999-12-31')
+  public function ChangeName($orgId=0,$name='',$short,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeAttr($orgId,$newName,$validOn,$endDate);
+    $text = array(
+      'name'       => $name,
+      'short_name' => $short,
+    );
+    $this->BaseModel->ChangeAttr($orgId,$text,$validOn,$endDate);
   }
 
   public function ChangeParent($orgId=0,$newParent=0,$validOn='',$endDate='9999-12-31')
@@ -78,9 +82,13 @@ class OrgModel extends CI_Model{
     return $this->BaseModel->CountTopDownRel($orgId,$this->relAssign,$keyDate);
   }
 
-  public function Create($name='',$beginDate='1990-01-01',$endDate='9999-12-31',$parentOrg=0)
+  public function Create($name='',$short,$beginDate='1990-01-01',$endDate='9999-12-31',$parentOrg=0)
   {
-    $orgId = $this->BaseModel->Create($this->objType,$name,$beginDate,$endDate);
+    $text = array(
+      'name'       => $name,
+      'short_name' => $short,
+    );
+    $orgId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
 
     $this->BaseModel->CreateRel($this->relStruct,$parentOrg,$orgId,$beginDate,$endDate);
 

@@ -25,9 +25,13 @@ class JobModel extends CI_Model{
     $this->relJob    = $this->config->item('relJob');
   }
 
-  public function Create($name='',$beginDate='1990-01-01',$endDate='9999-12-31')
+  public function Create($name='',$short='',$beginDate='1990-01-01',$endDate='9999-12-31')
   {
-    return $this->BaseModel->Create($this->objType,$name,$beginDate,$endDate);
+    $text = array(
+      'name'        => $name,
+      'short_name'  => $short,
+    );
+    return $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
   }
 
   public function Delete($objId=0)
@@ -40,9 +44,13 @@ class JobModel extends CI_Model{
     $this->BaseModel->Delimit($objId,$endDate);
   }
 
-  public function ChangeName($objId=0,$newName='',$validOn='',$endDate='9999-12-31')
+  public function ChangeName($objId=0,$name='',$short='',$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeAttr($objId,$newName,$validOn,$endDate);
+    $text = array(
+      'name'        => $name,
+      'short_name'  => $short,
+    );
+    $this->BaseModel->ChangeAttr($objId,$text,$validOn,$endDate);
   }
 
   public function ChangeRelDate($relId=0,$beginDate='',$endDate='')

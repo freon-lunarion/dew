@@ -7,7 +7,6 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th>Short</th>
       <th>Name</th>
       <th>Begin</th>
       <th>End</th>
@@ -19,7 +18,7 @@
     {org}
       <tr >
         <td>{id}</td>
-        <td>{short}</td>
+        <td>{name}</td>
         <td>{begda}</td>
         <td>{endda}</td>
         <td><a href="#" class="btn btn-link nav-open" data-id="{id}">Open</a></td>

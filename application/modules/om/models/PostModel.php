@@ -41,9 +41,13 @@ class PostModel extends CI_Model{
   {
     $this->BaseModel->ChangeRel('BotUp',$this->relJob,$postId,$newPersId,$validOn,$endDate);
   }
-  public function ChangeName($postId = 0, $newName='',$validOn='',$endDate='9999-12-31')
+  public function ChangeName($postId = 0, $newName='',$short='',$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeAttr($postId,$newName,$validOn,$endDate);
+    $text = array(
+      'name'  => $newName,
+      'short' => $short,
+    );
+    $this->BaseModel->ChangeAttr($postId,$text,$validOn,$endDate);
   }
 
   public function ChangeManagingOrg($postId=0,$newOrg=0,$validOn='',$endDate='9999-12-31')
@@ -117,9 +121,13 @@ class PostModel extends CI_Model{
     return $this->BaseModel->CountBotUpRel($postId,$this->relReport,$keyDate);
   }
 
-  public function Create($name='',$beginDate='1990-01-01',$endDate='9999-12-31-31',$orgId=0,$reportTo=0,$isChief=FALSE,$jobId=0,$empId=false)
+  public function Create($name='',$short,$beginDate='1990-01-01',$endDate='9999-12-31-31',$orgId=0,$reportTo=0,$isChief=FALSE,$jobId=0,$empId=false)
   {
-    $postId = $this->BaseModel->Create($this->objType,$name,$beginDate,$endDate);
+    $text = array(
+      'name' => $name,
+      'short' => $short,
+    );
+    $postId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
 
     $this->BaseModel->CreateRel($this->relReport,$reportTo,$postId,$beginDate,$endDate);
     $this->BaseModel->CreateRel($this->relAssign,$orgId,$postId,$beginDate,$endDate);

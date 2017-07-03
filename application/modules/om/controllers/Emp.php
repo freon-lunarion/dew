@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Emp extends CI_Controller{
 
   private $viewDir   = 'emp/';
-  private $ctrlClass = 'Om/Emp/';
+  private $selfCtrl = 'Om/Emp/';
   public function __construct()
   {
     parent::__construct();
@@ -27,11 +27,11 @@ class Emp extends CI_Controller{
     }
 
 
-    $data['ajaxUrl'] = $this->ctrlClass.'AjaxGetList';
+    $data['ajaxUrl'] = $this->selfCtrl.'AjaxGetList';
     $data['begin']   = $begin;
     $data['end']     = $end;
 
-    $data['addLink'] = $this->ctrlClass.'Add';
+    $data['addLink'] = $this->selfCtrl.'Add';
     $this->parser->parse($this->viewDir.'main_view',$data);
   }
 
@@ -48,7 +48,7 @@ class Emp extends CI_Controller{
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
         'name'     => $row->name,
-        'viewlink' => anchor($this->ctrlClass.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
+        'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
       );
       $data['rows'][$i] = $temp;
       $i++;
@@ -66,9 +66,9 @@ class Emp extends CI_Controller{
     }
     $data['postOpt']    = $post;
     $data['postSlc']    = '';
-    $data['cancelLink'] = $this->ctrlClass;
+    $data['cancelLink'] = $this->selfCtrl;
 
-    $data['process'] = $this->ctrlClass.'AddProcess';
+    $data['process'] = $this->selfCtrl.'AddProcess';
     $this->load->view($this->viewDir.'add_form',$data);
   }
 
@@ -82,8 +82,8 @@ class Emp extends CI_Controller{
     $data['postName']   = '';
     $data['begin']      = date('Y-m-d');
     $data['end']        = '9999-12-31';
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'AddPostProcess';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'AddPostProcess';
     $this->load->view($this->viewDir.'post_form',$data);
 
   }
@@ -95,7 +95,7 @@ class Emp extends CI_Controller{
     $end    = $this->input->post('dt_end');
     $postId = $this->input->post('slc_post');
     $this->EmpModel->AddPost($persId,$postId,$begin,$end);
-    redirect($this->ctrlClass);
+    redirect($this->selfCtrl);
   }
 
   public function AddProcess()
@@ -104,36 +104,36 @@ class Emp extends CI_Controller{
     $end   = $this->input->post('dt_end');
     $name  = $this->input->post('txt_name');
     $this->EmpModel->Create($name,$begin,$end);
-    redirect($this->ctrlClass);
+    redirect($this->selfCtrl);
   }
 
   public function DeleteProcess()
   {
     $id = $this->session->userdata('selectId');
     $this->BaseModel->Delete($id);
-    redirect($this->ctrlClass);
+    redirect($this->selfCtrl);
 
   }
 
   public function DeleteRelProcess($relId=0)
   {
     $this->EmpModel->DeleteRel($relId);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function EditDate()
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old = $this->EmpModel->GetByIdRow($id);
     $data['begin'] = $old->begin_date;
     $data['end']   = $old->end_date;
 
-    $data['cancelLink'] = $this->ctrlClass.'View/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
     $data['hidden']  = array();
-    $data['process'] = $this->ctrlClass.'EditDateProcess';
+    $data['process'] = $this->selfCtrl.'EditDateProcess';
     $this->load->view($this->viewDir.'date_form', $data);
 
   }
@@ -143,20 +143,20 @@ class Emp extends CI_Controller{
     $id  = $this->session->userdata('selectId');
     $end = $this->input->post('dt_end');
     $this->EmpModel->Delimit($id,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function EditName()
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old                = $this->EmpModel->GetLastName($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'EditNameProcess';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'EditNameProcess';
     $this->load->view($this->viewDir.'name_form', $data);
 
   }
@@ -167,7 +167,7 @@ class Emp extends CI_Controller{
     $newName = $this->input->post('txt_name');
     $id      = $this->session->userdata('selectId');
     $this->EmpModel->ChangeName($id,$newName,$validOn,'9999-12-31');
-    redirect($this->ctrlClass.'View/'.$id.'/'.$validOn.'/9999-12-31');
+    redirect($this->selfCtrl.'View/'.$id.'/'.$validOn.'/9999-12-31');
   }
 
   public function EditRel($relId=0)
@@ -176,10 +176,10 @@ class Emp extends CI_Controller{
       'rel_id' => $relId
     );
     $old = $this->EmpModel->GetRelByIdRow($relId);
-    $data['process'] = $this->ctrlClass.'EditRelProcess';
+    $data['process'] = $this->selfCtrl.'EditRelProcess';
     $data['begin']   = $old->begin_date;
     $data['end']     = $old->end_date;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
 
     $this->load->view($this->viewDir.'date_form', $data);
   }
@@ -190,7 +190,7 @@ class Emp extends CI_Controller{
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
     $this->EmpModel->ChangeRelDate($relId,$begin,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function View($id=0)
@@ -209,10 +209,10 @@ class Emp extends CI_Controller{
     $data['begin']    = $begin;
     $data['end']      = $end;
 
-    $data['backLink'] = $this->ctrlClass;
-    $data['delLink']  = $this->ctrlClass.'DeleteProcess';
-    $data['ajaxUrl1'] = $this->ctrlClass.'AjaxGetDetail';
-    $data['ajaxUrl2'] = $this->ctrlClass.'AjaxGetRel';
+    $data['backLink'] = $this->selfCtrl;
+    $data['delLink']  = $this->selfCtrl.'DeleteProcess';
+    $data['ajaxUrl1'] = $this->selfCtrl.'AjaxGetDetail';
+    $data['ajaxUrl2'] = $this->selfCtrl.'AjaxGetRel';
     $this->parser->parse($this->viewDir.'detail_view',$data);
   }
 
@@ -228,7 +228,7 @@ class Emp extends CI_Controller{
 
     $sprPost = $this->PostModel->GetReportTo($rel->obj_top_id,$keydate);
     $sprPers = $this->PostModel->GetLastHolder($sprPost->post_id,$keydate);
-    $data['backLink']    = $this->ctrlClass.'View/';
+    $data['backLink']    = $this->selfCtrl.'View/';
     $data['persId']      = $rel->obj_bottom_id;
 
     $data['persName']    = $persAtr->name;
@@ -257,8 +257,8 @@ class Emp extends CI_Controller{
     $data['objBegin'] = $obj->begin_date;
     $data['objEnd']   = $obj->end_date;
     $data['objName']  = $attr->name;
-    $data['editDate'] = $this->ctrlClass.'EditDate/';
-    $data['editName'] = $this->ctrlClass.'EditName/';
+    $data['editDate'] = $this->selfCtrl.'EditDate/';
+    $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
     $ls =  $this->EmpModel->GetNameHistoryList($id,$keydate,'desc');
@@ -288,9 +288,9 @@ class Emp extends CI_Controller{
     $end   = $this->session->userdata('filterEndDa');
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;
-    $delimit  = site_url($this->ctrlClass.'EditRel/');
-    $remove   = site_url($this->ctrlClass.'DeleteRelProcess/');
-    $sprLk    = site_url($this->ctrlClass.'ViewSpr/');
+    $delimit  = site_url($this->selfCtrl.'EditRel/');
+    $remove   = site_url($this->selfCtrl.'DeleteRelProcess/');
+    $sprLk    = site_url($this->selfCtrl.'ViewSpr/');
     $viewPost = site_url('Post/View/');
 
     $ls = $this->EmpModel->GetPostList($id,$keydate,'desc');
@@ -308,7 +308,7 @@ class Emp extends CI_Controller{
         'viewPost'  => $viewPost.$row->post_rel_id,
       );
     }
-    $data['addPost']  = $this->ctrlClass.'AddPost/';
+    $data['addPost']  = $this->selfCtrl.'AddPost/';
 
     $data['post']     = $post;
     $this->parser->parse($this->viewDir . 'rel_elm',$data);

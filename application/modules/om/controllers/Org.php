@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Org extends CI_Controller{
 
   private $viewDir   = 'org/';
-  private $ctrlClass = 'Om/Org/';
+  private $selfCtrl = 'Om/Org/';
 
   public function __construct()
   {
@@ -27,11 +27,11 @@ class Org extends CI_Controller{
     if ($end == '') {
       $end = date('Y-m-d');
     }
-    $data['ajaxUrl'] = $this->ctrlClass.'AJaxStruc';
+    $data['ajaxUrl'] = $this->selfCtrl.'AJaxStruc';
 
     $data['begin'] = $begin;
     $data['end']   = $end;
-    $data['addLink'] = $this->ctrlClass.'Add';
+    $data['addLink'] = $this->selfCtrl.'Add';
 
     $this->parser->parse($this->viewDir.'main_view',$data);
   }
@@ -48,11 +48,11 @@ class Org extends CI_Controller{
       $end = date('Y-m-d');
     }
 
-    $data['process']    = $this->ctrlClass.'AddProcess';
-    $data['ajaxUrl']    = site_url($this->ctrlClass.'AJaxStruc');
+    $data['process']    = $this->selfCtrl.'AddProcess';
+    $data['ajaxUrl']    = site_url($this->selfCtrl.'AJaxStruc');
     $data['orgId']      = '';
     $data['orgName']    = '';
-    $data['cancelLink'] = $this->ctrlClass;
+    $data['cancelLink'] = $this->selfCtrl;
 
     $this->load->view($this->viewDir.'add_form',$data);
 
@@ -63,9 +63,10 @@ class Org extends CI_Controller{
     $begin  = $this->input->post('dt_begin');
     $end    = $this->input->post('dt_end');
     $name   = $this->input->post('txt_name');
+    $short  = $this->input->post('txt_short');
     $parent = $this->input->post('hdn_org');
-    $this->OrgModel->Create($name,$begin,$end,$parent);
-    redirect($this->ctrlClass);
+    $this->OrgModel->Create($name,$short,$begin,$end,$parent);
+    redirect($this->selfCtrl);
   }
 
 
@@ -76,7 +77,7 @@ class Org extends CI_Controller{
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;
@@ -86,8 +87,8 @@ class Org extends CI_Controller{
     $data['begin']      = date('Y-m-d');
     $data['postId']     = $old->post_id;
     $data['postName']   = $old->post_name;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'EditChiefProcess';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'EditChiefProcess';
     $this->load->view($this->viewDir.'chief_form', $data);
 
   }
@@ -98,21 +99,21 @@ class Org extends CI_Controller{
     $newChief = $this->input->post('hdn_post');
     $id       = $this->session->userdata('selectId');
     $this->OrgModel->ChangeChiefPost($id,$newChief,$validOn,'9999-12-31');
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function EditDate()
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old = $this->OrgModel->GetByIdRow($id);
     $data['hidden']     = array();
     $data['end']        = $old->end_date;
     $data['begin']      = $old->begin_date;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'EditDateProcess';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'EditDateProcess';
     $this->load->view($this->viewDir.'date_form', $data);
 
   }
@@ -122,7 +123,7 @@ class Org extends CI_Controller{
     $id  = $this->session->userdata('selectId');
     $end = $this->input->post('dt_end');
     $this->OrgModel->Delimit($id,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
 
   }
 
@@ -130,13 +131,14 @@ class Org extends CI_Controller{
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old                = $this->OrgModel->GetLastName($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'EditNameProcess';
+    $data['short']      = $old->short_name;
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'EditNameProcess';
     $this->load->view($this->viewDir.'name_form', $data);
 
   }
@@ -145,9 +147,10 @@ class Org extends CI_Controller{
   {
     $validOn = $this->input->post('dt_begin');
     $newName = $this->input->post('txt_name');
+    $short = $this->input->post('txt_short');
     $id      = $this->session->userdata('selectId');
-    $this->OrgModel->ChangeName($id,$newName,$validOn,'9999-12-31');
-    redirect($this->ctrlClass.'View/'.$id);
+    $this->OrgModel->ChangeName($id,$newName,$short,$validOn,'9999-12-31');
+    redirect($this->selfCtrl.'View/'.$id);
   }
 
   public function EditParent()
@@ -161,8 +164,8 @@ class Org extends CI_Controller{
 
     $data['orgId']   = $old->parent_id;
     $data['orgName'] = $old->parent_name;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process'] = $this->ctrlClass.'EditParentProcess/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process'] = $this->selfCtrl.'EditParentProcess/';
     $this->load->view($this->viewDir.'parent_form', $data);
   }
 
@@ -172,7 +175,7 @@ class Org extends CI_Controller{
     $since     = $this->input->post('dt_begin');
     $newParent = $this->input->post('hdn_org');
     $this->OrgModel->ChangeParent($id,$newParent,$since,'9999-12-31');
-    redirect($this->ctrlClass.'View/'.$id);
+    redirect($this->selfCtrl.'View/'.$id);
 
   }
 
@@ -182,10 +185,10 @@ class Org extends CI_Controller{
       'rel_id' => $relId
     );
     $old = $this->OrgModel->GetRelByIdRow($relId);
-    $data['process'] = $this->ctrlClass.'EditRelProcess';
+    $data['process'] = $this->selfCtrl.'EditRelProcess';
     $data['begin']   = $old->begin_date;
     $data['end']     = $old->end_date;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
 
     $this->load->view($this->viewDir.'/date_form', $data);
   }
@@ -196,21 +199,21 @@ class Org extends CI_Controller{
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
     $this->OrgModel->ChangeRelDate($relId,$begin,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function DeleteProcess()
   {
     $id = $this->session->userdata('selectId');
     $this->OrgModel->Delete($id);
-    redirect($this->ctrlClass);
+    redirect($this->selfCtrl);
 
   }
 
   public function DeleteRelProcess($relId=0)
   {
     $this->OrgModel->DeleteRel($relId);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function View($id=0)
@@ -229,10 +232,10 @@ class Org extends CI_Controller{
 
     $data['begin']    = $begin;
     $data['end']      = $end;
-    $data['ajaxUrl1'] = $this->ctrlClass.'AjaxGetDetail';
-    $data['ajaxUrl2'] = $this->ctrlClass.'AjaxGetRel';
-    $data['backLink'] = $this->ctrlClass;
-    $data['delLink']  = $this->ctrlClass.'DeleteProcess';
+    $data['ajaxUrl1'] = $this->selfCtrl.'AjaxGetDetail';
+    $data['ajaxUrl2'] = $this->selfCtrl.'AjaxGetRel';
+    $data['backLink'] = $this->selfCtrl;
+    $data['delLink']  = $this->selfCtrl.'DeleteProcess';
 
     $this->parser->parse($this->viewDir.'detail_view',$data);
   }
@@ -259,10 +262,11 @@ class Org extends CI_Controller{
     $data['objBegin'] = $obj->begin_date;
     $data['objEnd']   = $obj->end_date;
     $data['objName']  = $attr->name;
+    $data['objShort'] = $attr->short_name;
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;
-    $data['editDate']   = $this->ctrlClass.'EditDate/';
-    $data['editName']   = $this->ctrlClass.'EditName/';
+    $data['editDate'] = $this->selfCtrl.'EditDate/';
+    $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
     $ls = $this->OrgModel->GetNameHistoryList($id,$keydate,'desc');
@@ -320,7 +324,8 @@ class Org extends CI_Controller{
           'begda'    => $row->child_begin_date,
           'endda'    => $row->child_end_date,
           'name'     => $row->child_name,
-          'viewlink' => anchor($this->ctrlClass.'View/'.$row->child_id,'View','class="btn btn-link" title="view"'),
+          'name'     => $row->child_short_name,
+          'viewlink' => anchor($this->selfCtrl.'View/'.$row->child_id,'View','class="btn btn-link" title="view"'),
         );
         $data['rows'][$i] = $temp;
         $i++;
@@ -328,14 +333,15 @@ class Org extends CI_Controller{
 
     } else {
       $row = $this->OrgModel->GetByIdRow(1,$date);
+      $name = $this->OrgModel->GetLastName(1,$date);
       $data['rows'][0] = array(
         'id'       => $row->id,
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
-        'name'     => $this->OrgModel->GetLastName(1,$date)->name,
-        'viewlink' => anchor($this->ctrlClass.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
+        'name'     => $name->name,
+        'name'     => $name->short_name,
+        'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
       );
-
     }
 
     $this->parser->parse('org/struct_content', $data);
@@ -349,8 +355,8 @@ class Org extends CI_Controller{
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
 
-    $delimit  = site_url($this->ctrlClass.'EditRel/');
-    $remove   = site_url($this->ctrlClass.'DeleteRelProcess/');
+    $delimit  = site_url($this->selfCtrl.'EditRel/');
+    $remove   = site_url($this->selfCtrl.'DeleteRelProcess/');
     $viewOrg  = site_url('Org/View/');
     $viewPost = site_url('Post/View/');
 
@@ -436,8 +442,8 @@ class Org extends CI_Controller{
       );
     }
     $data['chief'] = $chief;
-    $data['editParent'] = $this->ctrlClass.'EditParent/';
-    $data['editChief']  = $this->ctrlClass.'EditChief/';
+    $data['editParent'] = $this->selfCtrl.'EditParent/';
+    $data['editChief']  = $this->selfCtrl.'EditChief/';
     $this->parser->parse($this->viewDir . 'rel_elm',$data);
 
   }

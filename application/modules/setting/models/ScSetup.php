@@ -349,7 +349,7 @@ class ScSetup extends CI_Model{
     );
     foreach ($dataSet as $row) {
       $data = array(
-        'type'        => $this->config->item('objFormula'),
+        'type'        => $this->config->item('objPersp'),
         'begin_date'  => $begin,
         'end_date'    => $end,
         'create_time' => date('Y-m-d H:i:s'),

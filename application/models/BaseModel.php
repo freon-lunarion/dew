@@ -209,42 +209,15 @@ class BaseModel extends CI_Model{
     if (!is_array($keydate) && $keydate == '') {
       $keydate = date('Y-m-d');
     }
-    // Sub Query 1
-    $this->db->select('sub.name');
-    $this->db->where('sub.is_delete', FALSE);
-    $this->db->where('sub.obj_id = obj.id');
-    $this->db->from($this->config->item('tblAttr') .' sub');
-    $this->db->order_by('end_date','desc');
-    $this->db->limit(1,0);
-    if (!is_array($keydate)) {
-      $this->db->where('sub.begin_date >=', $keydate);
-      $this->db->where('sub.end_date <=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.end_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date <=', $keydate['begin']);
-          $this->db->where('sub.end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
+    $selectName = $this->_subqueryTextAttr('name',$keydate,0,'');
+    $selectShort = $this->_subqueryTextAttr('short_name',$keydate,0,'');
 
-    }
-    $subQuery = $this->db->get_compiled_select();
     $this->db->select('obj.id');
     $this->db->select('obj.begin_date');
     $this->db->select('obj.end_date');
-    $this->db->select('('.$subQuery .' ) AS name');
+    $this->db->select('('.$selectName .' ) AS name');
+    $this->db->select('('.$selectShort .' ) AS short_name');
+
 
     $this->db->where('obj.type', $type);
     $this->db->where('obj.is_delete', FALSE);
@@ -421,7 +394,7 @@ class BaseModel extends CI_Model{
    * @param  string     $endDate [yyyy-mm-dd]
    */
 
-  public function ChangeAttr($objId=0,$newName='',$validOn='',$endDate='9999-12-31')
+  public function ChangeAttr($objId=0,$text='',$validOn='',$endDate='9999-12-31')
   {
     if ($validOn == '') {
       $validOn = date('Y-m-d');
@@ -444,24 +417,24 @@ class BaseModel extends CI_Model{
       'end_date'   => $endDate,
     );
 
-    if (is_array($newName)) {
-      $data['name']       = $newName['name'];
+    if (is_array($text)) {
+      $data['name']       = $text['name'];
 
-      if (isset($newName['short'])) {
-        $data['short_name'] = $newName['short'];
-      } else if (isset($newName['short_name'])) {
-        $data['short_name'] = $newName['short_name'];
+      if (isset($text['short'])) {
+        $data['short_name'] = $text['short'];
+      } else if (isset($text['short_name'])) {
+        $data['short_name'] = $text['short_name'];
       }
 
-      if (isset($newName['desc'])) {
-        $data['description'] = $newName['desc'];
-      } else if (isset($newName['description'])) {
-        $data['description'] = $newName['description'];
+      if (isset($text['desc'])) {
+        $data['description'] = $text['desc'];
+      } else if (isset($text['description'])) {
+        $data['description'] = $text['description'];
 
       }
 
     } else {
-      $data['name'] = $newName;
+      $data['name'] = $text;
     }
 
     $this->InsertOn($this->config->item('tblAttr'),$data);
@@ -704,38 +677,9 @@ class BaseModel extends CI_Model{
     if (!is_array($keydate) && $keydate == '') {
       $keydate = date('Y-m-d');
     }
-    // Sub Query 1
-    $this->db->select('sub.name');
-    $this->db->where('sub.is_delete', FALSE);
-    $this->db->where('sub.obj_id = rel_NUM.obj_bottom_id');
-    $this->db->from($this->config->item('tblAttr') .' sub');
-    $this->db->order_by('end_date','desc');
-    $this->db->limit(1,0);
-    if (!is_array($keydate)) {
-      $this->db->where('sub.begin_date >=', $keydate);
-      $this->db->where('sub.end_date <=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.end_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date <=', $keydate['begin']);
-          $this->db->where('sub.end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
-    }
-    $subQuery = $this->db->get_compiled_select();
-    // END OF Sub Query 1
+    $subName  = $this->_subqueryTextAttr('name',$keydate,'NUM','TOPDOWN');
+    $subShort = $this->_subqueryTextAttr('short_name',$keydate,'NUM','TOPDOWN');
+
     $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_top_id', $topObjId);
     if (is_array($relCode)) {
@@ -744,21 +688,24 @@ class BaseModel extends CI_Model{
       for ($i=0; $i < $count ; $i++) {
         $this->db->order_by('rel_'.$i.'.end_date','desc');
 
-        $select = str_replace('NUM',$i,$subQuery);
+        $selectName  = str_replace('NUM',$i,$subName);
+        $selectShort = str_replace('NUM',$i,$subShort);
         if (is_array($alias) && $alias[$i] !='') {
           $this->db->select('rel_'.$i.'.obj_bottom_id AS '. $alias[$i].'_id');
-          $this->db->select('('.$select.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectName.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectShort.') AS '. $alias[$i].'_short_name');
           $this->db->select('rel_0.begin_date AS '. $alias[$i].'_begin_date');
           $this->db->select('rel_0.end_date AS '. $alias[$i].'_end_date');
         } else {
           $this->db->select('rel_'.$i.'.obj_bottom_id AS obj_'. $i.'_id');
-          $this->db->select('('.$select.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectName.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectShort.') AS obj_'.$i.'_short_name');
           $this->db->select('rel_0.begin_date AS obj'. $i.'_begin_date');
           $this->db->select('rel_0.end_date AS obj'. $i.'_end_date');
 
         }
       }
-      // end of sub query 1
+
       if ($count > 1) {
         for ($i=1; $i < $count ; $i++) {
           $j = $i - 1;
@@ -804,21 +751,24 @@ class BaseModel extends CI_Model{
         }
       }
     } else {
-      // Sub query 1
-      $select = str_replace('NUM','0',$subQuery);
+
+      $selectName  = str_replace('NUM',0,$subName);
+      $selectShort = str_replace('NUM',0,$subShort);
       if ($alias !='') {
         $this->db->select('rel_0.obj_bottom_id AS '. $alias.'_id');
-        $this->db->select('('.$select.') AS '. $alias.'_name');
+        $this->db->select('('.$selectName.') AS '. $alias.'_name');
+        $this->db->select('('.$selectShort.') AS '. $alias.'_short_name');
         $this->db->select('rel_0.begin_date AS '. $alias.'_begin_date');
         $this->db->select('rel_0.end_date AS '. $alias.'_end_date');
       } else {
         $this->db->select('rel_0.obj_bottom_id AS obj_id');
-        $this->db->select('('.$select.') AS obj_name');
+        $this->db->select('('.$selectName.') AS obj_name');
+        $this->db->select('('.$selectShort.') AS obj_short_name');
         $this->db->select('rel_0.begin_date AS obj_begin_date');
         $this->db->select('rel_0.end_date AS obj_end_date');
 
       }
-      //  end of Sub query 1
+
 
       if (!is_array($keydate)) {
         $this->db->where('rel_0.begin_date >=', $keydate);
@@ -863,55 +813,29 @@ class BaseModel extends CI_Model{
     if (!is_array($keydate) && $keydate == '') {
       $keydate = date('Y-m-d');
     }
-    // Sub Query 1
-    $this->db->select('sub.name');
-    $this->db->where('sub.is_delete', FALSE);
-    $this->db->where('sub.obj_id = rel_NUM.obj_bottom_id');
-    $this->db->from($this->config->item('tblAttr') .' sub');
-    $this->db->order_by('end_date','desc');
-    $this->db->limit(1,0);
-    if (!is_array($keydate)) {
-      $this->db->where('sub.begin_date >=', $keydate);
-      $this->db->where('sub.end_date <=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.end_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date <=', $keydate['begin']);
-          $this->db->where('sub.end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
-    }
-    $subQuery = $this->db->get_compiled_select();
-    // END OF Sub Query 1
+    $subName  = $this->_subqueryTextAttr('name',$keydate,'NUM','TOPDOWN');
+    $subShort = $this->_subqueryTextAttr('short_name',$keydate,'NUM','TOPDOWN');
+
     $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_top_id', $topObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
       // sub query 1
       for ($i=0; $i < $count ; $i++) {
-        $select = str_replace('NUM',$i,$subQuery);
+        $selectName  = str_replace('NUM',$i,$subName);
+        $selectShort = str_replace('NUM',$i,$subShort);
         if (is_array($alias) && $alias[$i] !='') {
           $this->db->select('rel_'.$i.'.obj_bottom_id AS '. $alias[$i].'_id');
           $this->db->select('rel_'.$i.'.id AS '. $alias[$i].'_rel_id');
           $this->db->select('rel_'.$i.'.begin_date AS '. $alias[$i].'_begin_date');
           $this->db->select('rel_'.$i.'.end_date AS '. $alias[$i].'_end_date');
-          $this->db->select('('.$select.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectName.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectShort.') AS '. $alias[$i].'_short_name');
         } else {
           $this->db->select('rel_'.$i.'.obj_bottom_id AS obj_'. $i.'_id');
           $this->db->select('rel_'.$i.'.id AS obj_'. $i.'_rel_id');
-          $this->db->select('('.$select.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectName.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectShort.') AS obj_'.$i.'_short_name');
           $this->db->select('rel_'.$i.'.begin_date AS obj_'. $i.'_begin_date');
           $this->db->select('rel_'.$i.'.end_date AS obj_'. $i.'_end_date');
         }
@@ -960,22 +884,25 @@ class BaseModel extends CI_Model{
         }
       }
     } else {
-      // Sub query 1
-      $select = str_replace('NUM','0',$subQuery);
+
+      $selectName  = str_replace('NUM',0,$subName);
+      $selectShort = str_replace('NUM',0,$subShort);
       if ($alias !='') {
         $this->db->select('rel_0.obj_bottom_id AS '. $alias.'_id');
         $this->db->select('rel_0.id AS '. $alias.'_rel_id');
         $this->db->select('rel_0.begin_date AS '. $alias.'_begin_date');
         $this->db->select('rel_0.end_date AS '. $alias.'_end_date');
-        $this->db->select('('.$select.') AS '. $alias.'_name');
+        $this->db->select('('.$selectName.') AS '. $alias.'_name');
+        $this->db->select('('.$selectShort.') AS '. $alias.'_short_name');
       } else {
         $this->db->select('rel_0.obj_bottom_id AS obj_id');
         $this->db->select('rel_0.id AS obj_rel_id');
         $this->db->select('rel_0.begin_date AS obj_begin_date');
         $this->db->select('rel_0.end_date AS obj_end_date');
-        $this->db->select('('.$select.') AS obj_name');
+        $this->db->select('('.$selectName.') AS obj_name');
+        $this->db->select('('.$selectShort.') AS obj_short_name');
       }
-      //  end of Sub query 1
+
 
       if (!is_array($keydate)) {
         $this->db->where('rel_0.begin_date >=', $keydate);
@@ -1108,56 +1035,30 @@ class BaseModel extends CI_Model{
     if (!is_array($keydate) && $keydate == '') {
       $keydate = date('Y-m-d');
     }
-    // Sub Query 1
-    $this->db->select('sub.name');
-    $this->db->where('sub.is_delete', FALSE);
-    $this->db->where('sub.obj_id = rel_NUM.obj_top_id');
-    $this->db->from($this->config->item('tblAttr') .' sub');
-    $this->db->order_by('end_date','desc');
-    $this->db->limit(1,0);
-    if (!is_array($keydate)) {
-      $this->db->where('sub.begin_date >=', $keydate);
-      $this->db->where('sub.end_date <=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.end_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date <=', $keydate['begin']);
-          $this->db->where('sub.end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
-    }
-    $subQuery = $this->db->get_compiled_select();
-    // END OF Sub Query 1
+    $subName = $this->_subqueryTextAttr('name',$keydate,'NUM','BOTUP');
+    $subShort = $this->_subqueryTextAttr('short_name',$keydate,'NUM','BOTUP');
+
     $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_bottom_id', $botObjId);
     if (is_array($relCode)) {
       $count = count($relCode);
       // sub query 1
       for ($i=0; $i < $count ; $i++) {
-        $select = str_replace('NUM',$i,$subQuery);
+        $selectName  = str_replace('NUM',$i,$subName);
+        $selectShort = str_replace('NUM',$i,$subShort);
         if (is_array($alias) && $alias[$i] !='') {
           $this->db->select('rel_'.$i.'.id AS '. $alias[$i].'_rel_id');
           $this->db->select('rel_'.$i.'.obj_top_id AS '. $alias[$i].'_id');
-          $this->db->select('('.$select.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectName.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectShort.') AS '. $alias[$i].'_short_name');
 
           $this->db->select('rel_'.$i.'.begin_date AS '. $alias[$i].'_begin_date');
           $this->db->select('rel_'.$i.'.end_date AS '. $alias[$i].'_end_date');
         } else {
           $this->db->select('rel_'.$i.'.id AS obj_'. $i.'_rel_id');
           $this->db->select('rel_'.$i.'.obj_top_id AS obj_'. $i.'_id');
-          $this->db->select('('.$select.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectName.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectShort.') AS obj_'.$i.'_short_name');
           $this->db->select('rel_'.$i.'.begin_date AS obj_'. $i.'_begin_date');
           $this->db->select('rel_'.$i.'.end_date AS obj_'. $i.'_end_date');
         }
@@ -1209,17 +1110,20 @@ class BaseModel extends CI_Model{
       }
     } else {
       // Sub query 1
-      $select = str_replace('NUM','0',$subQuery);
+      $selectName  = str_replace('NUM',0,$subName);
+      $selectShort = str_replace('NUM',0,$subShort);
       if ($alias !='') {
         $this->db->select('rel_0.id AS '. $alias.'_rel_id');
         $this->db->select('rel_0.obj_top_id AS '. $alias.'_id');
         $this->db->select('rel_0.begin_date AS '. $alias.'_begin_date');
         $this->db->select('rel_0.end_date AS '. $alias.'_end_date');
-        $this->db->select('('.$select.') AS '. $alias.'_name');
+        $this->db->select('('.$selectName.') AS '. $alias.'_name');
+        $this->db->select('('.$selectShort.') AS '. $alias.'_short_name');
       } else {
         $this->db->select('rel_0.id AS obj_rel_id');
         $this->db->select('rel_0.obj_top_id AS obj_id');
-        $this->db->select('('.$select.') AS obj_name');
+        $this->db->select('('.$selectName.') AS obj_name');
+        $this->db->select('('.$selectShort.') AS obj_short_name');
         $this->db->select('rel_0.begin_date AS obj_begin_date');
         $this->db->select('rel_0.end_date AS obj_end_date');
       }
@@ -1267,38 +1171,9 @@ class BaseModel extends CI_Model{
     if (!is_array($keydate) && $keydate == '') {
       $keydate = date('Y-m-d');
     }
-    // Sub Query 1
-    $this->db->select('sub.name');
-    $this->db->where('sub.is_delete', FALSE);
-    $this->db->where('sub.obj_id = rel_NUM.obj_top_id');
-    $this->db->from($this->config->item('tblAttr') .' sub');
-    $this->db->order_by('end_date','desc');
-    $this->db->limit(1,0);
-    if (!is_array($keydate)) {
-      $this->db->where('sub.begin_date >=', $keydate);
-      $this->db->where('sub.end_date <=', $keydate);
-    } else {
-      $this->db->group_start();
-        $this->db->group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.end_date >=', $keydate['begin']);
-          $this->db->where('sub.end_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date >=', $keydate['begin']);
-          $this->db->where('sub.begin_date <=', $keydate['end']);
-        $this->db->group_end();
-        $this->db->or_group_start();
-          $this->db->where('sub.begin_date <=', $keydate['begin']);
-          $this->db->where('sub.end_date >=', $keydate['end']);
-        $this->db->group_end();
-      $this->db->group_end();
-    }
-    $subQuery = $this->db->get_compiled_select();
-    // END OF Sub Query 1
+    $subName = $this->_subqueryTextAttr('name',$keydate,'NUM','BOTUP');
+    $subShort = $this->_subqueryTextAttr('short_name',$keydate,'NUM','BOTUP');
+
     $this->db->from($this->config->item('tblRel') .' AS rel_0');
     $this->db->where('rel_0.obj_bottom_id', $botObjId);
     if (is_array($relCode)) {
@@ -1307,15 +1182,18 @@ class BaseModel extends CI_Model{
       for ($i=0; $i < $count ; $i++) {
         $this->db->order_by('rel_'.$i.'.end_date','desc');
 
-        $select = str_replace('NUM',$i,$subQuery);
+        $selectName  = str_replace('NUM',$i,$subName);
+        $selectShort = str_replace('NUM',$i,$subShort);
         if (is_array($alias) && $alias[$i] !='') {
           $this->db->select('rel_'.$i.'.obj_top_id AS '. $alias[$i].'_id');
-          $this->db->select('('.$select.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectName.') AS '. $alias[$i].'_name');
+          $this->db->select('('.$selectShort.') AS '. $alias[$i].'_short_name');
           $this->db->select('rel_0.begin_date AS '. $alias[$i].'_begin_date');
           $this->db->select('rel_0.end_date AS '. $alias[$i].'_end_date');
         } else {
           $this->db->select('rel_'.$i.'.obj_top_id AS obj_'. $i.'_id');
-          $this->db->select('('.$select.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectName.') AS obj_'.$i.'_name');
+          $this->db->select('('.$selectShort.') AS obj_'.$i.'_short_name');
 
           $this->db->select('rel_0.begin_date AS obj_'. $i.'_begin_date');
           $this->db->select('rel_0.end_date AS obj_'. $i.'_end_date');
@@ -1368,21 +1246,24 @@ class BaseModel extends CI_Model{
         }
       }
     } else {
-      // Sub query 1
-      $select = str_replace('NUM','0',$subQuery);
+
+      $selectName  = str_replace('NUM',0,$subName);
+      $selectShort = str_replace('NUM',0,$subShort);
       if ($alias !='') {
         $this->db->select('rel_0.obj_top_id AS '. $alias.'_id');
-        $this->db->select('('.$select.') AS '. $alias.'_name');
+        $this->db->select('('.$selectName.') AS '. $alias.'_name');
+        $this->db->select('('.$selectShort.') AS '. $alias.'_short_name');
         $this->db->select('rel_0.begin_date AS '. $alias.'_begin_date');
         $this->db->select('rel_0.end_date AS '. $alias.'_end_date');
       } else {
         $this->db->select('rel_0.obj_top_id AS obj_id');
-        $this->db->select('('.$select.') AS obj_name');
+        $this->db->select('('.$selectName.') AS obj_name');
+        $this->db->select('('.$selectShort.') AS obj_short_name');
         $this->db->select('rel_0.begin_date AS obj_begin_date');
         $this->db->select('rel_0.end_date AS obj_end_date');
 
       }
-      //  end of Sub query 1
+
 
       if (!is_array($keydate)) {
         $this->db->where('rel_0.begin_date >=', $keydate);
@@ -1545,6 +1426,52 @@ class BaseModel extends CI_Model{
     }
     $this->db->order_by('end_date','desc');
     return $this->db->get($tbl)->row();
+  }
+
+  private function _subqueryTextAttr($selectField='',$keydate='',$index = 'NUM',$whereField='')
+  {
+    $this->db->select('sub.'.$selectField);
+    $this->db->where('sub.is_delete', FALSE);
+    switch (strtoupper($whereField)) {
+      case 'TOPDOWN':
+        $this->db->where('sub.obj_id = rel_'.$index.'.obj_bottom_id');
+
+        break;
+      case 'BOTUP':
+        $this->db->where('sub.obj_id = rel_'.$index.'.obj_top_id');
+
+        break;
+      default:
+        $this->db->where('sub.obj_id = obj.id');
+        break;
+    }
+    $this->db->from($this->config->item('tblAttr') .' sub');
+    $this->db->order_by('end_date','desc');
+    $this->db->limit(1,0);
+    if (!is_array($keydate)) {
+      $this->db->where('sub.begin_date >=', $keydate);
+      $this->db->where('sub.end_date <=', $keydate);
+    } else {
+      $this->db->group_start();
+        $this->db->group_start();
+          $this->db->where('sub.begin_date >=', $keydate['begin']);
+          $this->db->where('sub.end_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('sub.end_date >=', $keydate['begin']);
+          $this->db->where('sub.end_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('sub.begin_date >=', $keydate['begin']);
+          $this->db->where('sub.begin_date <=', $keydate['end']);
+        $this->db->group_end();
+        $this->db->or_group_start();
+          $this->db->where('sub.begin_date <=', $keydate['begin']);
+          $this->db->where('sub.end_date >=', $keydate['end']);
+        $this->db->group_end();
+      $this->db->group_end();
+    }
+    return $this->db->get_compiled_select();
   }
   // ---------------------------------------------------------------------------
 

@@ -16,3 +16,9 @@
   <input type="text" class="form-control" id="txt_name" name="txt_name" placeholder="">
   <p class="help-block">5-150 Characters.</p>
 </div>
+<div class="form-group">
+  <label for="txt_name">Description</label>
+  <textarea class="form-control" id="txt_descr" name="txt_descr" placeholder="">
+
+  </textarea>
+</div>

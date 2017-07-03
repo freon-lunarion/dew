@@ -4,6 +4,12 @@
 </div>
 
 <div class="form-group">
+  <label for="txt_name">Short Name</label>
+  <input type="text" class="form-control" id="txt_name" name="txt_name" placeholder="" value="<?php echo $short; ?>">
+  <p class="help-block">5-15 Characters.</p>
+</div>
+
+<div class="form-group">
   <label for="txt_name">Name</label>
   <input type="text" class="form-control" id="txt_name" name="txt_name" placeholder="" value="<?php echo $name; ?>">
   <p class="help-block">5-150 Characters.</p>

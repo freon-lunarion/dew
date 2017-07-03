@@ -3,8 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Job extends CI_Controller{
 
-  private $viewDir   = 'job/';
-  private $ctrlClass = 'Om/Job/';
+  private $viewDir  = 'job/';
+  private $selfCtrl = 'Om/Job/';
   public function __construct()
   {
     parent::__construct();
@@ -27,11 +27,11 @@ class Job extends CI_Controller{
       $end = date('Y-m-d');
     }
 
-    $data['ajaxUrl'] = $this->ctrlClass.'AjaxGetList';
+    $data['ajaxUrl'] = $this->selfCtrl.'AjaxGetList';
     $data['begin'] = $begin;
     $data['end']   = $end;
 
-    $data['addLink'] = $this->ctrlClass.'Add';
+    $data['addLink'] = $this->selfCtrl.'Add';
     $this->parser->parse($this->viewDir.'main_view',$data);
   }
 
@@ -48,7 +48,8 @@ class Job extends CI_Controller{
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
         'name'     => $row->name,
-        'viewlink' => anchor($this->ctrlClass.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
+        'short'    => $row->short_name,
+        'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class ="btn btn-link" title ="view"'),
       );
       $data['rows'][$i] = $temp;
       $i++;
@@ -58,9 +59,8 @@ class Job extends CI_Controller{
 
   public function Add()
   {
-    $data['cancelLink'] = $this->ctrlClass;
-
-    $data['process'] = $this->ctrlClass.'AddProcess';
+    $data['cancelLink'] = $this->selfCtrl;
+    $data['process'] = $this->selfCtrl.'AddProcess';
     $this->load->view($this->viewDir.'add_form',$data);
   }
 
@@ -69,37 +69,39 @@ class Job extends CI_Controller{
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
     $name  = $this->input->post('txt_name');
-    $this->JobModel->Create($name,$begin,$end);
-    redirect($this->ctrlClass);
+    $short = $this->input->post('txt_short');
+
+    $this->JobModel->Create($name,$short,$begin,$end);
+    redirect($this->selfCtrl);
   }
 
   public function DeleteProcess()
   {
     $id = $this->session->userdata('selectId');
     $this->BaseModel->Delete($id);
-    redirect($this->ctrlClass);
+    redirect($this->selfCtrl);
 
   }
 
   public function DeleteRelProcess($relId=0)
   {
     $this->JobModel->DeleteRel($relId);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function EditDate()
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old = $this->JobModel->GetByIdRow($id);
     $data['begin'] = $old->begin_date;
     $data['end']   = $old->end_date;
 
-    $data['cancelLink'] = $this->ctrlClass.'View/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
     $data['hidden']  = array();
-    $data['process'] = $this->ctrlClass.'EditDateProcess';
+    $data['process'] = $this->selfCtrl.'EditDateProcess';
     $this->load->view($this->viewDir.'date_form', $data);
 
   }
@@ -109,20 +111,21 @@ class Job extends CI_Controller{
     $id  = $this->session->userdata('selectId');
     $end = $this->input->post('dt_end');
     $this->JobModel->Delimit($id,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function EditName()
   {
     $id  = $this->session->userdata('selectId');
     if ($id == '') {
-      redirect($this->ctrlClass);
+      redirect($this->selfCtrl);
     }
     $old                = $this->JobModel->GetLastName($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
-    $data['process']    = $this->ctrlClass.'EditNameProcess';
+    $data['short']      = $old->short_name;
+    $data['cancelLink'] = $this->selfCtrl.'View/';
+    $data['process']    = $this->selfCtrl.'EditNameProcess';
     $this->load->view($this->viewDir.'name_form', $data);
 
   }
@@ -131,9 +134,10 @@ class Job extends CI_Controller{
   {
     $validOn = $this->input->post('dt_begin');
     $newName = $this->input->post('txt_name');
+    $short   = $this->input->post('txt_short');
     $id      = $this->session->userdata('selectId');
-    $this->JobModel->ChangeName($id,$newName,$validOn,'9999-12-31');
-    redirect($this->ctrlClass.'View/'.$id.'/'.$validOn.'/9999-12-31');
+    $this->JobModel->ChangeName($id,$newName,$short,$validOn,'9999-12-31');
+    redirect($this->selfCtrl.'View/'.$id);
   }
 
   public function EditRel($relId=0)
@@ -142,10 +146,10 @@ class Job extends CI_Controller{
       'rel_id' => $relId
     );
     $old = $this->JobModel->GetRelByIdRow($relId);
-    $data['process'] = $this->ctrlClass.'EditRelProcess';
+    $data['process'] = $this->selfCtrl.'EditRelProcess';
     $data['begin']   = $old->begin_date;
     $data['end']     = $old->end_date;
-    $data['cancelLink'] = $this->ctrlClass.'View/';
+    $data['cancelLink'] = $this->selfCtrl.'View/';
 
     $this->load->view($this->viewDir.'date_form', $data);
   }
@@ -156,7 +160,7 @@ class Job extends CI_Controller{
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
     $this->JobModel->ChangeRelDate($relId,$begin,$end);
-    redirect($this->ctrlClass.'View/');
+    redirect($this->selfCtrl.'View/');
   }
 
   public function View($id=0)
@@ -174,10 +178,10 @@ class Job extends CI_Controller{
 
     $data['begin']    = $begin;
     $data['end']      = $end;
-    $data['backLink'] = $this->ctrlClass;
-    $data['delLink']  = $this->ctrlClass.'DeleteProcess';
-    $data['ajaxUrl1'] = $this->ctrlClass.'AjaxGetDetail';
-    $data['ajaxUrl2'] = $this->ctrlClass.'AjaxGetRel';
+    $data['backLink'] = $this->selfCtrl;
+    $data['delLink']  = $this->selfCtrl.'DeleteProcess';
+    $data['ajaxUrl1'] = $this->selfCtrl.'AjaxGetDetail';
+    $data['ajaxUrl2'] = $this->selfCtrl.'AjaxGetRel';
     $this->parser->parse($this->viewDir.'detail_view',$data);
   }
 
@@ -201,12 +205,14 @@ class Job extends CI_Controller{
         'objBegin' => $obj->begin_date,
         'objEnd'   => $obj->end_date,
         'objName'  => $attr->name,
+        'objShort' => $attr->short_name,
+        'objDescr' => $attr->description,
       );
     }
     $data['begin']    = $begin;
     $data['end']      = $end;
-    $data['editDate'] = $this->ctrlClass.'EditDate/';
-    $data['editName'] = $this->ctrlClass.'EditName/';
+    $data['editDate'] = $this->selfCtrl.'EditDate/';
+    $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
     $ls =  $this->JobModel->GetNameHistoryList($id,$keydate,'desc');
@@ -222,6 +228,7 @@ class Job extends CI_Controller{
         'historyBegin' => $row->begin_date,
         'historyEnd'   => $row->end_date,
         'historyName'  => $row->name,
+        'historyShort' => $row->short_name,
       );
     }
     $data['history']  = $history;
@@ -235,8 +242,8 @@ class Job extends CI_Controller{
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
 
-    $delimit = site_url($this->ctrlClass.'EditRel/');
-    $remove  = site_url($this->ctrlClass.'DeleteRelProcess/');
+    $delimit = site_url($this->selfCtrl.'EditRel/');
+    $remove  = site_url($this->selfCtrl.'DeleteRelProcess/');
 
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;

@@ -42,8 +42,12 @@ class EmpModel extends CI_Model{
     $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$beginDate,$endDate,$order);
   }
 
-  public function ChangeName($persId=0,$newName='',$validOn='',$endDate='9999-12-31')
+  public function ChangeName($persId=0,$name='',$short='',$validOn='',$endDate='9999-12-31')
   {
+    $text = array(
+      'name'  => $name,
+      'short' => $short,
+    );
     $this->BaseModel->ChangeAttr($persId,$newName,$validOn,$endDate);
   }
 
@@ -57,12 +61,16 @@ class EmpModel extends CI_Model{
     return $this->BaseModel->CountBotUpRel($persId,$this->$relHold,$keyDate);
   }
 
-  public function Create($name='',$postId=FALSE,$beginDate='',$endDate='9999-12-31')
+  public function Create($name='',$short='',$postId=FALSE,$beginDate='',$endDate='9999-12-31')
   {
     if ($beginDate == '') {
       $beginDate = date('Y-m-d');
     }
-    $persId = $this->BaseModel->Create($this->objType,$name,$beginDate,$endDate);
+    $text = array(
+      'name'  => $name,
+      'short' => $short,
+    );
+    $persId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
     if ($postId) {
       $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$beginDate,$endDate);
     }

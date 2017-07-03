@@ -8,6 +8,7 @@
     <tr>
       <th>Type</th>
       <th>ID</th>
+      <th>Short</th>
       <th>Name</th>
       <th>Begin</th>
       <th>End</th>
@@ -19,6 +20,7 @@
       <tr >
         <td><i class="fa fa-sitemap" title="Organization"></i></td>
         <td>{id}</td>
+        <td>{short}</td>
         <td>{name}</td>
         <td>{begda}</td>
         <td>{endda}</td>
@@ -31,6 +33,7 @@
       <tr >
         <td><i class="glyphicon glyphicon-pawn" title="Position"></i></td>
         <td>{id}</td>
+        <td>{short}</td>
         <td>{name}</td>
         <td>{begda}</td>
         <td>{endda}</td>
