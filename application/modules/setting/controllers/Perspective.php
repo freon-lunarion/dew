@@ -9,7 +9,7 @@ class Perspective extends CI_Controller{
     parent::__construct();
     $this->load->model('PerspectiveModel', 'MainModel');
     $this->load->library('parser');
-    
+
 
   }
 
@@ -79,7 +79,7 @@ class Perspective extends CI_Controller{
     $descr = $this->input->post('txt_description');
 
     $this->MainModel->Create($name,$short,$descr,$begin,$end);
-
+    redirect($this->selfCtrl);
   }
 
   public function EditDate()

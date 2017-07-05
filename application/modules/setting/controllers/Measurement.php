@@ -70,14 +70,26 @@ class Measurement extends CI_Controller{
 
   public function AddProcess()
   {
-    $begin = $this->input->post('dt_begin');
-    $end   = $this->input->post('dt_end');
-    $name  = $this->input->post('txt_name');
-    $short = $this->input->post('txt_short');
-    $descr = $this->input->post('txt_description');
+    $begin  = $this->input->post('dt_begin');
+    $end    = $this->input->post('dt_end');
+    $name   = $this->input->post('txt_name');
+    $short  = $this->input->post('txt_short');
+    $descr  = $this->input->post('txt_description');
+    $hasMin = $this->input->post('chk_min');
+    $hasMax = $this->input->post('chk_max');
+    $minVal = $this->input->post('nm_min');
+    $maxVal = $this->input->post('nm_max');
 
-    $this->MainModel->Create($name,$short,$descr,$begin,$end);
+    if ($hasMin == '') {
+      $hasMin = 0;
+    }
 
+    if ($hasMax == '') {
+      $hasMax = 0;
+    }
+
+    $this->MainModel->Create($name,$short,$descr,$hasMin, $hasMax, $minVal, $maxVal, $begin,$end);
+    redirect($this->selfCtrl);
   }
 
   public function EditDate()
@@ -107,6 +119,8 @@ class Measurement extends CI_Controller{
 
   public function EditName()
   {
+    $this->load->helper('form');
+
     $id = $this->session->userdata('selectId');
     if ($id == '') {
       redirect($this->selfCtrl);
@@ -132,6 +146,62 @@ class Measurement extends CI_Controller{
     $descr   = $this->input->post('txt_descr');
     $id      = $this->session->userdata('selectId');
     $this->MainModel->ChangeName($id,$name,$short,$descr,$validOn,'9999-12-31');
+    redirect($this->selfCtrl.'View/'.$id);
+
+  }
+
+  public function EditValue()
+  {
+    $this->load->helper('form');
+
+    $id = $this->session->userdata('selectId');
+    if ($id == '') {
+      redirect($this->selfCtrl);
+    }
+    $old = $this->MainModel->GetLastValue($id);
+    $data = array(
+      'begin'      => date('Y-m-d'),
+      'cancelLink' => $this->selfCtrl.'View/',
+      'process'    => $this->selfCtrl.'EditValueProcess',
+      'minVal'     => $old->min_value,
+      'maxVal'     => $old->max_value
+    );
+
+    if ($old->has_min) {
+      $data['hasMin'] = 'checked';
+    } else {
+      $data['hasMin'] = '';
+
+    }
+
+    if ($old->has_max) {
+      $data['hasMax'] = 'checked';
+    } else {
+      $data['hasMax'] = '';
+
+    }
+    $this->load->view($this->viewDir.'value_form', $data);
+
+  }
+
+  public function EditValueProcess()
+  {
+    $validOn = $this->input->post('dt_begin');
+    $id      = $this->session->userdata('selectId');
+    $hasMin  = $this->input->post('chk_min');
+    $hasMax  = $this->input->post('chk_max');
+    $minVal  = $this->input->post('nm_min');
+    $maxVal  = $this->input->post('nm_max');
+
+    if ($hasMin == '') {
+      $hasMin = 0;
+    }
+
+    if ($hasMax == '') {
+      $hasMax = 0;
+    }
+
+    $this->MainModel->ChangeValue($id,$hasMin, $hasMax, $minVal, $maxVal ,$validOn,'9999-12-31');
     redirect($this->selfCtrl.'View/'.$id);
 
   }
@@ -202,25 +272,40 @@ class Measurement extends CI_Controller{
     );
 
     $data = array(
-      'objBegin' => '',
-      'objEnd'   => '',
-      'objName'  => '',
-      'begin'    => $begin,
-      'end'      => $end,
-      'editDate' => $this->selfCtrl.'EditDate/',
-      'editName' => $this->selfCtrl.'EditName/',
+      'objBegin'  => '',
+      'objEnd'    => '',
+      'objName'   => '',
+      'begin'     => $begin,
+      'end'       => $end,
+      'editDate'  => $this->selfCtrl.'EditDate/',
+      'editName'  => $this->selfCtrl.'EditName/',
+      'editValue' => $this->selfCtrl.'EditValue/',
     );
 
     $obj  = $this->MainModel->GetByIdRow($id);
     if ($obj) {
+      $val  = $this->MainModel->GetLastValue($id,$keydate);
       $attr = $this->MainModel->GetLastName($id,$keydate);
       $data['objBegin'] = $obj->begin_date;
       $data['objEnd']   = $obj->end_date;
       $data['objName']  = $attr->name;
       $data['objShort'] = $attr->short_name;
       $data['objDescr'] = $attr->description;
+      $this->parser->parse('_element/obj_detail',$data);
+
+      if ($val->has_min == FALSE) {
+        $data['minVal'] = '-&#x221e;';
+      } else {
+        $data['minVal'] = $val->min_value;
+      }
+
+      if ($val->has_max == FALSE) {
+        $data['maxVal'] = '&#x221e;';
+      } else {
+        $data['maxVal'] = $val->max_value;
+      }
     }
-    $this->parser->parse('_element/obj_detail',$data);
+    $this->parser->parse($this->viewDir.'/detail_value_view',$data);
 
     $ls = $this->MainModel->GetNameHistoryList($id,$keydate,'desc');
     $history = array();
@@ -256,24 +341,6 @@ class Measurement extends CI_Controller{
       'begin' => $begin,
       'end'   => $end,
     );
-
-    // $ls = $this->MainModel->GetSoList($id,$keydate);
-    // $rel = array();
-    //
-    // foreach ($ls as $row) {
-    //   $rel[] = array(
-    //     'soRelId'  => $row->so_rel_id,
-    //     'soBegin'  => $row->so_begin_date,
-    //     'soEnd'    => $row->so_end_date,
-    //     'soId'     => $row->so_id,
-    //     'soName'   => $row->so_name,
-    //     'chgRel'   => $delimit.$row->so_rel_id,
-    //     'remRel'   => $remove.$row->so_rel_id,
-    //     'viewRel' => site_url('So/View/'.$row->so_id),
-    //   );
-    // }
-    // $data['so'] = $rel;
-    // $this->parser->parse($this->viewDir . 'rel_elm',$data);
 
   }
 }

@@ -26,12 +26,13 @@ class MeasurementModel extends CI_Model{
     $objId = $this->BaseModel->Create($this->objType,$text,$begin,$end);
 
     $data = array(
-      'has_min'    => $hasMin,
-      'has_max'    => $hasMax,
-      'min_value'  => $minVal,
-      'max_value'  => $maxVal,
-      'begin_date' => $begin,
-      'end_date'   => $end,
+      'measurement_id' => $objId,
+      'has_min'        => $hasMin,
+      'has_max'        => $hasMax,
+      'min_value'      => $minVal,
+      'max_value'      => $maxVal,
+      'begin_date'     => $begin,
+      'end_date'       => $end,
     );
     $this->BaseModel->InsertOn($this->tbl,$data);
     return $objId;
@@ -113,7 +114,7 @@ class MeasurementModel extends CI_Model{
 
   public function CountKpi($measurementId=0, $keyDate = '')
   {
-    
+
   }
 
   public function GetKpiList($measurementId=0, $keyDate = '')

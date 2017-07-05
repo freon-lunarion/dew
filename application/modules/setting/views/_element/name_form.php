@@ -16,7 +16,5 @@
 
 <div class="form-group">
   <label for="txt_name">Description</label>
-  <textarea class="form-control" id="txt_descr" name="txt_descr" placeholder="">
-    <?php echo $descr; ?>
-  </textarea>
+  <textarea class="form-control" id="txt_descr" name="txt_descr" placeholder=""><?php echo $descr; ?></textarea>
 </div>
