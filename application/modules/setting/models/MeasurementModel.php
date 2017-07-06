@@ -42,7 +42,6 @@ class MeasurementModel extends CI_Model{
   {
     //Soft Delete
     $this->BaseModel->Delete($measId);
-
     $this->BaseModel->DeleteOn($this->tbl,$measId,'measurement_id');
   }
 

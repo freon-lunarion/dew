@@ -1,18 +1,18 @@
 <?php $this->load->view('_base/top');?>
 <h1 class="page-header">Formula  <small>Score</small></h1>
-<?php echo form_open($process, 'class="form"'); ?>
+<?php echo form_open($process, 'class="form"',$hidden); ?>
 
   <div class="form-group">
     <label for="">Value</label>
-    <input type="number" class="form-control" id="nm_value" name="nm_value" min="1" max="5" step="1" value=<?php echo $scoreValue ?>>
+    <input type="number" class="form-control" id="nm_value" name="nm_value" min="0" max="5" step="1" value=<?php echo $scoreValue ?>>
   </div>
   <div class="form-group">
     <label for="">Lower Bound</label>
-    <input type="number" class="form-control" id="nm_lower" name="nm_lower" min="-999999.99" max="999999.99" step="1.00" value=<?php echo $scoreLower ?>>
+    <input type="number" class="form-control" id="nm_lower" name="nm_lower" value=<?php echo $scoreLower ?>>
   </div>
   <div class="form-group">
     <label for="">Upper Bound</label>
-    <input type="number" class="form-control" id="nm_upper" name="nm_upper" min="-999999.99" max="999999.99" step="1.00" value=<?php echo $scoreUpper ?>>
+    <input type="number" class="form-control" id="nm_upper" name="nm_upper"   value=<?php echo $scoreUpper ?>>
   </div>
 
   <?php $this->load->view('_element/date_form'); ?>

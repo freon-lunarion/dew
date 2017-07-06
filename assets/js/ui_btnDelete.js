@@ -9,6 +9,7 @@ $('body').on('click', '.btn-delete', function(event) {
     type: "input",
     showCancelButton: true,
     closeOnConfirm: false,
+    confirmButtonColor: "#DD6B55",
     animation: "pop",
     inputPlaceholder: "YES"
   },

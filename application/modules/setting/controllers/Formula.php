@@ -260,61 +260,46 @@ class Formula extends CI_Controller{
 
   }
 
-  public function AddScore()
-  {
-    $id    = $this->session->userdata('selectId');
-    $begin = $this->session->userdata('filterBegDa');
-    $end   = $this->session->userdata('filterEndDa');
 
+  public function EditValue()
+  {
+    $this->load->helper('form');
+    $id = $this->session->userdata('selectId');
+    if ($id == '') {
+      redirect($this->selfCtrl);
+    }
+    $old = $this->MainModel->GetLastValue($id);
     $data = array(
-      'process'    => $this->selfCtrl.'AddScoreProcess',
-      'cancelLink' => $this->selfCtrl.'View',
-      'hidden'  => array(
-        'formulaId' => $id,
-      ),
-      'scoreValue' => 0,
-      'scoreLower' => 0,
-      'scoreUpper' => 0,
+      'begin'      => date('Y-m-d'),
+      'cancelLink' => $this->selfCtrl.'View/',
+      'process'    => $this->selfCtrl.'EditValueProcess',
+      'typeMax'    => '',
+      'typeMin'    => '',
+      'typeSta'    => '',
     );
+    switch ($old->type) {
+      case 'MAX':
+        $data['typeMax'] = 'checked';
+        break;
+      case 'MIN':
+        $data['typeMin'] = 'checked';
+        break;
+      case 'STA':
+        $data['typeSta'] = 'checked';
+        break;
+    }
 
-    $this->load->view($this->viewDir.'score_form', $data);
+    $this->load->view($this->viewDir.'value_form', $data);
   }
 
-  public function AddScoreProcess()
+  public function EditValueProcess()
   {
-    $id = $this->input->post('formulaId');
-    $score = $this->input->post('nm_value');
-    $lower = $this->input->post('nm_lower');
-    $upper = $this->input->post('nm_upper');
-    $this->MainModel->CreateScore();
-    redirect($this->selfCtrl.'View/');
-  }
+    $validOn = $this->input->post('dt_begin');
+    $id      = $this->session->userdata('selectId');
+    $type  = $this->input->post('rd_type');
 
-  public function EditScore($id=0)
-  {
-    $old = $this->MainModel->GetScoreByIdRow($id);
-    $data = array(
-      'process'    => $this->selfCtrl.'EditScoreProcess',
-      'cancelLink' => $this->selfCtrl.'View',
-      'hidden'  => array(
-        'scoreId' => $id,
-      ),
-      'scoreValue' => $old->value,
-      'scoreLower' => $old->lower_bound,
-      'scoreUpper' => $old->upper_bound,
-    );
-
-    $this->load->view($this->viewDir.'score_form', $data);
-  }
-
-  public function EditScoreProcess()
-  {
-    $id = $this->input->post('scoreId');
-    $score = $this->input->post('nm_value');
-    $lower = $this->input->post('nm_lower');
-    $upper = $this->input->post('nm_upper');
-    $this->MainModel->ChangeScore($id,$value,$lower,$upper);
-    redirect($this->selfCtrl.'View/');
+    $this->MainModel->ChangeValue($id,$types ,$validOn,'9999-12-31');
+    redirect($this->selfCtrl.'View/'.$id);
   }
 
   public function AjaxScore()
@@ -336,7 +321,8 @@ class Formula extends CI_Controller{
         'scoreUpper'  => $row->upper_bound,
         'scoreBegin'  => $row->begin_date,
         'scoreEnd'    => $row->end_date,
-        'scoreEdit'   => site_url($this->selfCtrl.'EditScore/'.$row->id)
+        'scoreEdit'   => site_url($this->selfCtrl.'EditScore/'.$row->id),
+        'scoreDelete' => site_url($this->selfCtrl.'DeleteScoreProcess/'.$row->id)
       );
     }
     $data = array(
@@ -345,6 +331,80 @@ class Formula extends CI_Controller{
     );
 
     $this->parser->parse($this->viewDir.'score_view',$data);
+  }
+
+  public function AddScore()
+  {
+    $this->load->helper('form');
+    $id    = $this->session->userdata('selectId');
+    $begin = $this->session->userdata('filterBegDa');
+    $end   = $this->session->userdata('filterEndDa');
+
+    $data = array(
+      'process'    => $this->selfCtrl.'AddScoreProcess',
+      'cancelLink' => $this->selfCtrl.'View',
+      'hidden'  => array(
+        'formulaId' => $id,
+      ),
+      'scoreValue' => 0,
+      'scoreLower' => 0,
+      'scoreUpper' => 0,
+      'begin'      => $begin,
+      'end'        => date('Y-m-d'),
+    );
+
+    $this->load->view($this->viewDir.'score_form', $data);
+  }
+
+  public function AddScoreProcess()
+  {
+    $id    = $this->input->post('formulaId');
+    $score = $this->input->post('nm_value');
+    $lower = $this->input->post('nm_lower');
+    $upper = $this->input->post('nm_upper');
+    $begin = $this->input->post('dt_begin');
+    $end   = $this->input->post('dt_end');
+    $this->MainModel->CreateScore($id,$score,$lower,$upper,$begin,$end);
+    redirect($this->selfCtrl.'View/');
+  }
+
+  public function EditScore($id=0)
+  {
+    $this->load->helper('form');
+    $old = $this->MainModel->GetScoreByIdRow($id);
+    $data = array(
+      'process'    => $this->selfCtrl.'EditScoreProcess',
+      'cancelLink' => $this->selfCtrl.'View',
+      'hidden'  => array(
+        'scoreId' => $id,
+      ),
+      'scoreValue' => $old->value,
+      'scoreLower' => $old->lower_bound,
+      'scoreUpper' => $old->upper_bound,
+      'begin'      => $old->begin_date,
+      'end'        => $old->end_date,
+    );
+
+    $this->load->view($this->viewDir.'score_form', $data);
+  }
+
+  public function EditScoreProcess()
+  {
+    $id    = $this->input->post('scoreId');
+    $score = $this->input->post('nm_value');
+    $lower = $this->input->post('nm_lower');
+    $upper = $this->input->post('nm_upper');
+    $begin = $this->input->post('dt_begin');
+    $end   = $this->input->post('dt_end');
+    $this->MainModel->ChangeScore($id,$score,$lower,$upper,$begin,$end);
+    redirect($this->selfCtrl.'View/');
+  }
+
+  public function DeleteScoreProcess($id)
+  {
+    $this->MainModel->DeleteScore($id);
+    redirect($this->selfCtrl.'View');
+
   }
 
   public function AjaxGetRel()

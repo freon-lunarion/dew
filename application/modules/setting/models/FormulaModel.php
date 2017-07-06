@@ -45,6 +45,32 @@ class FormulaModel extends CI_Model{
 
   }
 
+  public function ChangeValue($formulaId = 0, $type = '', $validOn = '', $endDate = '9999-12-31')
+  {
+    if ($validOn == '') {
+      $validOn = date('Y-m-d');
+    }
+    $this->db->select('id');
+    $this->db->where('formula_id', $formulaId);
+    $this->db->order_by('end_date','desc');
+    $row    = $this->db->get($this->tbl)->row();
+
+    $attId    = $row->id;
+    $data     = array(
+      'end_date' => date('Y-m-d',strtotime($validOn . '-1 days')),
+    );
+    $this->BaseModel->ChangeOn($this->tbl,$attId,$data);
+
+    $data = array(
+      'formula_id'     => $formulaId,
+      'type'           => $type,
+      'begin_date'     => $validOn,
+      'end_date'       => $endDate,
+    );
+    $this->BaseModel->InsertOn($this->tbl,$data);
+
+  }
+
   public function ChangeName($formulaId = 0, $newName = '', $newShort = '', $newDesc = '', $validOn = '', $endDate = '9999-12-31')
   {
     $text = array(
@@ -97,7 +123,7 @@ class FormulaModel extends CI_Model{
     return $this->BaseModel->InsertOn($this->tblScore,$data);
   }
 
-  public function ChangeScore($attId = 0 , $value = 1 , $lower = 0.00, $upper = 0.00, $validOn = '1990-01-01' , $end = '9999-12-31')
+  public function ChangeScore($scoreId = 0 , $value = 1 , $lower = 0.00, $upper = 0.00, $validOn = '1990-01-01' , $end = '9999-12-31')
   {
     if ($validOn == '') {
       $validOn = date('Y-m-d');
@@ -105,7 +131,8 @@ class FormulaModel extends CI_Model{
     $data     = array(
       'end_date' => date('Y-m-d',strtotime($validOn . '-1 days')),
     );
-    $this->BaseModel->ChangeOn($this->tblScore,$attId,$data);
+    $formulaId = $this->GetScoreByIdRow($scoreId)->formula_id;
+    $this->BaseModel->ChangeOn($this->tblScore,$scoreId,$data);
     $data = array(
       'formula_id'  => $formulaId,
       'value'       => $value,
@@ -115,6 +142,11 @@ class FormulaModel extends CI_Model{
       'end_date'    => $end,
     );
     $this->BaseModel->InsertOn($this->tblScore,$data);
+  }
+
+  public function DeleteScore($scoreId=0)
+  {
+    $this->BaseModel->DeleteOn($this->tblScore,$scoreId);
   }
 
   public function GetScoreList($formulaId=0,$keydate = '')
@@ -145,7 +177,8 @@ class FormulaModel extends CI_Model{
     }
     $this->db->where('formula_id', $formulaId);
     $this->db->where('is_delete', FALSE);
-
+    $this->db->order_by('value');
+    $this->db->order_by('end_date','desc');
     return $this->db->get($this->tblScore)->result();
   }
 

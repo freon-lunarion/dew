@@ -11,23 +11,26 @@
 <table class="table table-striped table-hover">
   <thead>
     <tr>
-      <th>Begin</th>
-      <th>End</th>
       <th>Value</th>
       <th>Lower</th>
       <th>Upper</th>
+      <th>Begin</th>
+      <th>End</th>
       <th>Action</th>
     </tr>
   </thead>
   <tbody>
     {score}
       <tr >
-        <td>{scoreBegin}</td>
-        <td>{scoreEnd}</td>
         <td>{scoreValue}</td>
         <td>{scoreLower}</td>
         <td>{scoreUpper}</td>
-        <td><a href="{scoreEdit}" class="btn btn-link" title="Edit Score"><i class="glyphicon glyphicon-pencil"></i></a></td>
+        <td>{scoreBegin}</td>
+        <td>{scoreEnd}</td>
+        <td>
+          <a href="{scoreEdit}" class="btn btn-link" title="Edit Score"><i class="glyphicon glyphicon-pencil"></i></a>
+          <a href="{scoreDelete}" class="btn btn-link btn-delete" title="Delete Score"><i class="glyphicon glyphicon-trash"></i></a>
+        </td>
       </tr>
     {/score}
   </tbody>
