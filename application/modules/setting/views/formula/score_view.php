@@ -22,7 +22,7 @@
   <tbody>
     {score}
       <tr >
-        <td>{scoreValue}</td>
+        <td style="background-color:{scoreColor}">{scoreValue}</td>
         <td>{scoreLower}</td>
         <td>{scoreUpper}</td>
         <td>{scoreBegin}</td>

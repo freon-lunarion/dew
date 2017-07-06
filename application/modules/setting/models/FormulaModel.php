@@ -110,20 +110,21 @@ class FormulaModel extends CI_Model{
 
   // Formula Score
 
-  public function CreateScore($formulaId = 0, $value = 1 , $lower = 0.00, $upper = 0.00, $begin = '1990-01-01' , $end= '9999-12-31')
+  public function CreateScore($formulaId = 0, $value = 1 , $lower = 0.00, $upper = 0.00, $color='', $begin = '1990-01-01' , $end= '9999-12-31')
   {
     $data = array(
       'formula_id'  => $formulaId,
       'value'       => $value,
       'lower_bound' => $lower,
       'upper_bound' => $upper,
+      'color'       => $color,
       'begin_date'  => $begin,
       'end_date'    => $end,
     );
     return $this->BaseModel->InsertOn($this->tblScore,$data);
   }
 
-  public function ChangeScore($scoreId = 0 , $value = 1 , $lower = 0.00, $upper = 0.00, $validOn = '1990-01-01' , $end = '9999-12-31')
+  public function ChangeScore($scoreId = 0 , $value = 1 , $lower = 0.00, $upper = 0.00, $color='', $validOn = '1990-01-01' , $end = '9999-12-31')
   {
     if ($validOn == '') {
       $validOn = date('Y-m-d');
@@ -138,6 +139,7 @@ class FormulaModel extends CI_Model{
       'value'       => $value,
       'lower_bound' => $lower,
       'upper_bound' => $upper,
+      'color'       => $color,
       'begin_date'  => $validOn,
       'end_date'    => $end,
     );

@@ -319,6 +319,7 @@ class Formula extends CI_Controller{
         'scoreValue'  => $row->value,
         'scoreLower'  => $row->lower_bound,
         'scoreUpper'  => $row->upper_bound,
+        'scoreColor'  => $row->color,
         'scoreBegin'  => $row->begin_date,
         'scoreEnd'    => $row->end_date,
         'scoreEdit'   => site_url($this->selfCtrl.'EditScore/'.$row->id),
@@ -349,6 +350,7 @@ class Formula extends CI_Controller{
       'scoreValue' => 0,
       'scoreLower' => 0,
       'scoreUpper' => 0,
+      'scoreColor' => '#000000',
       'begin'      => $begin,
       'end'        => date('Y-m-d'),
     );
@@ -362,9 +364,10 @@ class Formula extends CI_Controller{
     $score = $this->input->post('nm_value');
     $lower = $this->input->post('nm_lower');
     $upper = $this->input->post('nm_upper');
+    $color = $this->input->post('cp_color');
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
-    $this->MainModel->CreateScore($id,$score,$lower,$upper,$begin,$end);
+    $this->MainModel->CreateScore($id,$score,$lower,$upper,$color,$begin,$end);
     redirect($this->selfCtrl.'View/');
   }
 
@@ -381,6 +384,7 @@ class Formula extends CI_Controller{
       'scoreValue' => $old->value,
       'scoreLower' => $old->lower_bound,
       'scoreUpper' => $old->upper_bound,
+      'scoreColor' => $old->color,
       'begin'      => $old->begin_date,
       'end'        => $old->end_date,
     );
@@ -394,9 +398,11 @@ class Formula extends CI_Controller{
     $score = $this->input->post('nm_value');
     $lower = $this->input->post('nm_lower');
     $upper = $this->input->post('nm_upper');
+    $color = $this->input->post('cp_color');
+
     $begin = $this->input->post('dt_begin');
     $end   = $this->input->post('dt_end');
-    $this->MainModel->ChangeScore($id,$score,$lower,$upper,$begin,$end);
+    $this->MainModel->ChangeScore($id,$score,$lower,$upper,$color,$begin,$end);
     redirect($this->selfCtrl.'View/');
   }
 

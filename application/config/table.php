@@ -13,6 +13,7 @@ $config['tblMeasure'] = 'sc_measurement_attr';
 
 $config['tblFormula'] = 'sc_formula_attr';
 $config['tblScore']   = 'sc_formula_score';
+$config['tblScoreMain'] = 'sc_score';
 
 $config['tblKpi']     = 'sc_kpi_attr';
 

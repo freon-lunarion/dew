@@ -202,6 +202,12 @@ class ScSetup extends CI_Model{
         'constraint' => '8,2',
         'after'      => 'lower_bound'
       ),
+      'color' => array(
+        'type'       => 'VARCHAR',
+        'constraint' => '8',
+        'after'      => 'upper_bound',
+        'default'    => '#000000',
+      ),
 
     );
     $this->dbforge->add_field($genField);
@@ -321,7 +327,40 @@ class ScSetup extends CI_Model{
     $this->dbforge->add_key('id', TRUE);
     $this->dbforge->create_table($this->config->item('tblTargetR'),TRUE,$this->attributes);
     $this->dbforge->add_column($this->config->item('tblTargetR'),$targetRelFields);
-    // -------------------------------------------
+    // -------------------------------------------------------------------------
+
+    // score (main)
+    $scoreMainFields = array(
+      'value' => array(
+        'type'       => 'INT',
+        'constraint' => 5,
+        'unsigned'   => TRUE,
+        'after'      => 'id'
+      ),
+      'lower_bound' => array(
+        'type'       => 'DECIMAL',
+        'constraint' => '8,2',
+        'after'      => 'value'
+      ),
+      'upper_bound' => array(
+        'type'       => 'DECIMAL',
+        'constraint' => '8,2',
+        'after'      => 'lower_bound'
+      ),
+      'color' => array(
+        'type'       => 'VARCHAR',
+        'constraint' => '8',
+        'after'      => 'upper_bound',
+        'default'    => '#000000',
+      ),
+
+    );
+    $this->dbforge->add_field($genField);
+    $this->dbforge->add_key('id', TRUE);
+    $this->dbforge->create_table($this->config->item('tblScoreMain'),TRUE,$this->attributes);
+    $this->dbforge->add_column($this->config->item('tblScoreMain'),$scoreMainFields);
+    // -------------------------------------------------------------------------
+
   }
 
   public function InsertIntialRecords()
@@ -492,11 +531,11 @@ class ScSetup extends CI_Model{
         'short'   => '0MAX',
         'type'    => 'MAX',
         'score'   => array(
-          array('value' => 1, 'lower'=> -999999.99, 'upper' => 69.99),
-          array('value' => 2, 'lower'=> 70.00, 'upper' => 94.99),
-          array('value' => 3, 'lower'=> 95.00, 'upper' => 114.99),
-          array('value' => 4, 'lower'=> 115.00, 'upper' => 129.99),
-          array('value' => 5, 'lower'=> 130.00, 'upper' => 999999.99),
+          array('value' => 1, 'lower'=> -999999.99, 'upper' => 69.99, 'color' => '#f56954'),
+          array('value' => 2, 'lower'=> 70.00, 'upper' => 94.99, 'color' => '#f39c12'),
+          array('value' => 3, 'lower'=> 95.00, 'upper' => 114.99, 'color' => '#00a65a'),
+          array('value' => 4, 'lower'=> 115.00, 'upper' => 129.99, 'color' => '#00c0ef'),
+          array('value' => 5, 'lower'=> 130.00, 'upper' => 999999.99, 'color' => '#3c8dbc'),
         ),
       ),
       array(
@@ -504,11 +543,11 @@ class ScSetup extends CI_Model{
         'short'   => '0MIN',
         'type'    => 'MIN',
         'score'   => array(
-          array('value' => 5, 'lower'=> -999999.99, 'upper' => 69.99),
-          array('value' => 4, 'lower'=> 70.00, 'upper' => 94.99),
-          array('value' => 3, 'lower'=> 95.00, 'upper' => 114.99),
-          array('value' => 2, 'lower'=> 115.00, 'upper' => 129.99),
-          array('value' => 1, 'lower'=> 130.00, 'upper' => 999999.99),
+          array('value' => 5, 'lower'=> -999999.99, 'upper' => 69.99, 'color' => '#3c8dbc'),
+          array('value' => 4, 'lower'=> 70.00, 'upper' => 94.99, 'color' => '#00c0ef'),
+          array('value' => 3, 'lower'=> 95.00, 'upper' => 114.99, 'color' => '#00a65a'),
+          array('value' => 2, 'lower'=> 115.00, 'upper' => 129.99, 'color' => '#f39c12'),
+          array('value' => 1, 'lower'=> 130.00, 'upper' => 999999.99, 'color' => '#f56954'),
         ),
       ),
       array(
@@ -516,11 +555,11 @@ class ScSetup extends CI_Model{
         'short'   => '0STAB',
         'type'    => 'STA',
         'score'   => array(
-          array('value' => 1, 'lower'=> 200.01, 'upper' => 999999.99),
-          array('value' => 2, 'lower'=> 100.01, 'upper' => 200.00),
-          array('value' => 3, 'lower'=> -100.00, 'upper' => 100.00),
-          array('value' => 2, 'upper'=> -100.01, 'lower' => -200.00),
-          array('value' => 1, 'upper'=> -200.01, 'lower' => -999999.99),
+          array('value' => 1, 'lower'=> 200.01, 'upper' => 999999.99, 'color' => '#f56954'),
+          array('value' => 2, 'lower'=> 100.01, 'upper' => 200.00, 'color' => '#f39c12'),
+          array('value' => 3, 'lower'=> -100.00, 'upper' => 100.00, 'color' => '#00a65a'),
+          array('value' => 2, 'upper'=> -100.01, 'lower' => -200.00, 'color' => '#f39c12'),
+          array('value' => 1, 'upper'=> -200.01, 'lower' => -999999.99, 'color' => '#f56954'),
 
         ),
       ),
@@ -562,6 +601,7 @@ class ScSetup extends CI_Model{
           'value'       => $score['value'],
           'lower_bound' => $score['lower'],
           'upper_bound' => $score['upper'],
+          'color'       => $score['color'],
           'begin_date'  => $begin,
           'end_date'    => $end,
           'create_time' => date('Y-m-d H:i:s'),
@@ -570,6 +610,58 @@ class ScSetup extends CI_Model{
       }
 
     }
+
+    // score
+
+    $data = array(
+      array(
+        'value'       => 1,
+        'lower_bound' => 0.00,
+        'upper_bound' => 1.60,
+        'color'       => '#f56954',
+        'begin_date'  => $begin,
+        'end_date'    => $end,
+        'create_time' => date('Y-m-d H:i:s')
+      ),
+      array(
+        'value'       => 2,
+        'lower_bound' => 1.61,
+        'upper_bound' => 2.50,
+        'color'       => '#f39c12',
+        'begin_date'  => $begin,
+        'end_date'    => $end,
+        'create_time' => date('Y-m-d H:i:s')
+      ),
+      array(
+        'value'       => 3,
+        'lower_bound' => 2.51,
+        'upper_bound' => 3.50,
+        'color'       => '#00a65a',
+        'begin_date'  => $begin,
+        'end_date'    => $end,
+        'create_time' => date('Y-m-d H:i:s')
+      ),
+      array(
+        'value'       => 4,
+        'lower_bound' => 3.51,
+        'upper_bound' => 4.50,
+        'color'       => '#00c0ef',
+        'begin_date'  => $begin,
+        'end_date'    => $end,
+        'create_time' => date('Y-m-d H:i:s')
+      ),
+      array(
+        'value'       => 5,
+        'lower_bound' => 4.51,
+        'upper_bound' => 5.00,
+        'color'       => '#3c8dbc',
+        'begin_date'  => $begin,
+        'end_date'    => $end,
+        'create_time' => date('Y-m-d H:i:s')
+      ),
+    );
+    $this->db->insert_batch($this->config->item('tblScoreMain'), $data);
+    // -------------------------------------------------------------------------
     return ($objId - 1);
   }
 
@@ -577,6 +669,7 @@ class ScSetup extends CI_Model{
   {
     $this->dbforge->drop_table($this->config->item('tblFormula'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblScore'),TRUE);
+    $this->dbforge->drop_table($this->config->item('tblScoreMain'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblMeasure'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblYtd'),TRUE);
 
