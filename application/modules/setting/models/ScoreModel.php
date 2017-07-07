@@ -114,4 +114,47 @@ class ScoreModel extends CI_Model{
     return $this->db->get($this->tbl)->row();
   }
 
+  public function Create($value=0, $category='', $lower=0.00, $upper=0.00, $color='#000000', $begin='1990-01-01', $end='9999-12-31')
+  {
+    $data = array(
+      'value'       => $value,
+      'category'    => $category,
+      'lower_bound' => $lower,
+      'upper_bound' => $upper,
+      'color'       => $color,
+      'begin_date'  => $begin,
+      'end_date'    => $end,
+      'create_time' => date('Y-m-d H:i:s')
+    );
+    $this->db->insert($this->tbl, $data);
+
+    return $this->db->insert_id();
+  }
+
+  public function Change($id=0,$value=0, $category='', $lower=0.00, $upper=0.00, $color='#000000', $begin='1990-01-01', $end='9999-12-31')
+  {
+    $data = array(
+      'value'       => $value,
+      'category'    => $category,
+      'lower_bound' => $lower,
+      'upper_bound' => $upper,
+      'color'       => $color,
+      'begin_date'  => $begin,
+      'end_date'    => $end,
+    );
+
+    $this->db->where('id', $id);
+    $this->db->update($this->tbl, $data);
+  }
+
+  public function Delete($id=0)
+  {
+    $data = array(
+      'is_delete'  => TRUE,
+
+    );
+
+    $this->db->where('id', $id);
+    $this->db->update($this->tbl, $data);
+  }
 }

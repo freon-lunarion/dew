@@ -337,10 +337,16 @@ class ScSetup extends CI_Model{
         'unsigned'   => TRUE,
         'after'      => 'id'
       ),
+      'category' => array(
+        'type'       => 'VARCHAR',
+        'constraint' => 50,
+        'unsigned'   => TRUE,
+        'after'      => 'value'
+      ),
       'lower_bound' => array(
         'type'       => 'DECIMAL',
         'constraint' => '8,2',
-        'after'      => 'value'
+        'after'      => 'category'
       ),
       'upper_bound' => array(
         'type'       => 'DECIMAL',
@@ -616,6 +622,7 @@ class ScSetup extends CI_Model{
     $data = array(
       array(
         'value'       => 1,
+        'category'    => 'Incompetent',
         'lower_bound' => 0.00,
         'upper_bound' => 1.60,
         'color'       => '#f56954',
@@ -625,6 +632,7 @@ class ScSetup extends CI_Model{
       ),
       array(
         'value'       => 2,
+        'category'    => 'Need Improvement',
         'lower_bound' => 1.61,
         'upper_bound' => 2.50,
         'color'       => '#f39c12',
@@ -634,6 +642,7 @@ class ScSetup extends CI_Model{
       ),
       array(
         'value'       => 3,
+        'category'    => 'Meet Expectation',
         'lower_bound' => 2.51,
         'upper_bound' => 3.50,
         'color'       => '#00a65a',
@@ -643,6 +652,7 @@ class ScSetup extends CI_Model{
       ),
       array(
         'value'       => 4,
+        'category'    => 'Above Expectation',
         'lower_bound' => 3.51,
         'upper_bound' => 4.50,
         'color'       => '#00c0ef',
@@ -652,6 +662,7 @@ class ScSetup extends CI_Model{
       ),
       array(
         'value'       => 5,
+        'category'    => 'Excelent',
         'lower_bound' => 4.51,
         'upper_bound' => 5.00,
         'color'       => '#3c8dbc',
