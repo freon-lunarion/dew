@@ -11,7 +11,7 @@ class Post extends CI_Controller{
     parent::__construct();
     $this->load->model('PostModel');
     $this->load->library('parser');
-    
+
 
   }
 
@@ -151,6 +151,7 @@ class Post extends CI_Controller{
     $validOn = $this->input->post('dt_begin');
     $newOrg  = $this->input->post('hdn_org');
     $id      = $this->session->userdata('selectId');
+
     $this->PostModel->ChangeAssigmentOrg($id,$newOrg,$validOn,'9999-12-31');
     redirect($this->selfCtrl.'View/');
   }
@@ -186,7 +187,7 @@ class Post extends CI_Controller{
   {
     $this->load->helper('form');
 
-    $this->load->model('PersModel');
+    $this->load->model('EmpModel');
     $id    = $this->session->userdata('selectId');
     $begin = $this->session->userdata('filterBegDa');
     $end   = $this->session->userdata('filterEndDa');
@@ -197,7 +198,7 @@ class Post extends CI_Controller{
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;
 
-    $ls = $this->PersModel->GetList($begin,$end);
+    $ls = $this->EmpModel->GetList($begin,$end);
     $empOpt = array(''=>'');
     foreach ($ls as $row) {
       $empOpt[$row->id] = $row->id .' - '.$row->name;
@@ -222,7 +223,8 @@ class Post extends CI_Controller{
     $validOn   = $this->input->post('dt_begin');
     $newHolder = $this->input->post('rd_emp');
     $id        = $this->session->userdata('selectId');
-    $this->PostModel->ChangeHolder($id,$newHolder,$validOn,'9999-12-31');
+    $weight    = $this->input->post('nm_weight');
+    $this->PostModel->ChangeHolder($id,$newHolder,$weight,$validOn,'9999-12-31');
     redirect($this->selfCtrl.'View/');
   }
 
@@ -299,6 +301,8 @@ class Post extends CI_Controller{
     $newOrg  = $this->input->post('hdn_org');
     $id      = $this->session->userdata('selectId');
     $this->PostModel->ChangeManagingOrg($id,$newOrg,$validOn,'9999-12-31');
+
+
     redirect($this->selfCtrl.'View/');
   }
 

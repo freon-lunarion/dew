@@ -27,7 +27,8 @@ class OrgModel extends CI_Model{
 
   public function ChangeChiefPost($orgId,$newPost=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('TOPDOWN',$this->relChief,$orgId,$newPost,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('TOPDOWN',$this->relChief,$orgId,$newPost,40,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('TOPDOWN',$this->relAssign,$orgId,$newPost,60,$validOn,$endDate);
   }
 
   public function ChangeName($orgId=0,$name='',$short,$validOn='',$endDate='9999-12-31')
@@ -41,7 +42,7 @@ class OrgModel extends CI_Model{
 
   public function ChangeParent($orgId=0,$newParent=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BOTUP',$this->relStruct,$orgId,$newParent,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BOTUP',$this->relStruct,$orgId,$newParent,100,$validOn,$endDate);
   }
 
   public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
@@ -90,7 +91,7 @@ class OrgModel extends CI_Model{
     );
     $orgId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
 
-    $this->BaseModel->CreateRel($this->relStruct,$parentOrg,$orgId,$beginDate,$endDate);
+    $this->BaseModel->CreateRel($this->relStruct,$parentOrg,$orgId,100,$beginDate,$endDate);
 
     return $orgId;
   }

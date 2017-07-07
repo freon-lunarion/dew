@@ -13,6 +13,10 @@
     <label for="txt_name">Employee</label>
     <input type="text" class="form-control" id="txt_search" placeholder="Type Employee's name">
   </div>
+  <div class="form-group">
+    <label for="txt_name">Weight</label>
+    <input type="number" class="form-control" id="nm_weight" name="nm_weight" value="100">
+  </div>
   <div id="emp_content">
 
   </div>
@@ -24,7 +28,7 @@
   function Searching() {
     var query = $('#txt_search').val();
     $.ajax({
-      url: siteUrl + '/Ajax/ShowEmployeeSelection',
+      url: siteUrl + '/om/Ajax/ShowEmployeeSelection',
       type: 'POST',
       dataType: 'html',
       data: {query: query}

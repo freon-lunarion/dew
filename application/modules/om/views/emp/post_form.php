@@ -5,7 +5,10 @@
   <?php $this->load->view('_element/date_form');?>
 
   <?php $this->load->view('_element/orgPostStruct_input'); ?>
-
+  <div class="form-group">
+    <label for="txt_name">Weight</label>
+    <input type="number" class="form-control" id="nm_weight" name="nm_weight" value="100">
+  </div>
   <?php $this->load->view('_element/form_act'); ?>
 
 </form>

@@ -27,19 +27,19 @@ class PostModel extends CI_Model{
 
   public function ChangeAssigmentOrg($postId=0,$newOrg=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BotUp',$this->relAssign,$postId,$newOrg,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relAssign,$postId,$newOrg,100,$validOn,$endDate);
   }
 
-  public function ChangeHolder($postId=0,$newPersId=FALSE,$validOn='',$endDate='9999-12-31')
+  public function ChangeHolder($postId=0,$newPersId=FALSE,$weight=100,$validOn='',$endDate='9999-12-31')
   {
     if ($newPersId) {
-      $this->BaseModel->ChangeRel('TopDown',$this->relHold,$postId,$newPersId,$validOn,$endDate);
+      $this->BaseModel->ChangeRel('TopDown',$this->relHold,$postId,$newPersId,$weight,$validOn,$endDate);
     }
   }
 
   public function ChangeJob($postId=0,$newJobId=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BotUp',$this->relJob,$postId,$newPersId,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relJob,$postId,$newPersId,100,$validOn,$endDate);
   }
   public function ChangeName($postId = 0, $newName='',$short='',$validOn='',$endDate='9999-12-31')
   {
@@ -52,7 +52,8 @@ class PostModel extends CI_Model{
 
   public function ChangeManagingOrg($postId=0,$newOrg=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BotUp',$this->relChief,$postId,$newOrg,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relChief,$postId,$newOrg,40,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relAssign,$postId,$newOrg,60,$validOn,$endDate);
   }
 
   public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
@@ -62,7 +63,7 @@ class PostModel extends CI_Model{
 
   public function ChangeSupervisor($postId=0,$newPost=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BotUp',$this->relReport,$postId,$newOrg,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relReport,$postId,$newOrg,100,$validOn,$endDate);
   }
 
   public function CountAssigmentOrg($postId=0,$keyDate='')
@@ -129,14 +130,17 @@ class PostModel extends CI_Model{
     );
     $postId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
 
-    $this->BaseModel->CreateRel($this->relReport,$reportTo,$postId,$beginDate,$endDate);
-    $this->BaseModel->CreateRel($this->relAssign,$orgId,$postId,$beginDate,$endDate);
+    $this->BaseModel->CreateRel($this->relReport,$reportTo,$postId,100,$beginDate,$endDate);
     if ($isChief) {
-      $this->BaseModel->CreateRel($this->relChief,$orgId,$postId,$beginDate,$endDate);
+      $this->BaseModel->CreateRel($this->relChief,$orgId,$postId, 40,$beginDate,$endDate);
+      $weight = 60;
+    } else {
+      $weight = 100;
     }
-    $this->BaseModel->CreateRel($this->relJob,$jobId,$postId,$beginDate,$endDate);
+    $this->BaseModel->CreateRel($this->relAssign,$orgId,$postId,$weight,$beginDate,$endDate);
+    $this->BaseModel->CreateRel($this->relJob,$jobId,$postId,100,$beginDate,$endDate);
     if ($empId) {
-      $this->BaseModel->CreateRel($this->relHold,$postId,$empId,$beginDate,$endDate);
+      $this->BaseModel->CreateRel($this->relHold,$postId,$empId,100,$beginDate,$endDate);
     }
     return $postId;
   }

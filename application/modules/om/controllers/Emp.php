@@ -10,7 +10,7 @@ class Emp extends CI_Controller{
     parent::__construct();
     $this->load->model('EmpModel'); // BaseModel is included
     $this->load->library('parser');
-    
+
 
   }
 
@@ -50,6 +50,7 @@ class Emp extends CI_Controller{
         'begda'    => $row->begin_date,
         'endda'    => $row->end_date,
         'name'     => $row->name,
+        'short'    => $row->short_name,
         'viewlink' => anchor($this->selfCtrl.'View/'.$row->id,'View','class="btn btn-link" title="view"'),
       );
       $data['rows'][$i] = $temp;
@@ -99,17 +100,21 @@ class Emp extends CI_Controller{
     $persId = $this->session->userdata('selectId');;
     $begin  = $this->input->post('dt_begin');
     $end    = $this->input->post('dt_end');
-    $postId = $this->input->post('slc_post');
+    $postId = $this->input->post('hdn_post');
+    $weight = $this->input->post('nm_weight');
     $this->EmpModel->AddPost($persId,$postId,$begin,$end);
     redirect($this->selfCtrl);
   }
 
   public function AddProcess()
   {
-    $begin = $this->input->post('dt_begin');
-    $end   = $this->input->post('dt_end');
-    $name  = $this->input->post('txt_name');
-    $this->EmpModel->Create($name,$begin,$end);
+    $begin  = $this->input->post('dt_begin');
+    $end    = $this->input->post('dt_end');
+    $name   = $this->input->post('txt_name');
+    $short  = $this->input->post('txt_short');
+    $weight = $this->input->post('nm_weight');
+    $postId = $this->input->post('hdn_post');
+    $this->EmpModel->Create($name,$short,$postId,$weight,$begin,$end);
     redirect($this->selfCtrl);
   }
 
@@ -165,6 +170,7 @@ class Emp extends CI_Controller{
     $old                = $this->EmpModel->GetLastName($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
+    $data['short']      = $old->short_name;
     $data['cancelLink'] = $this->selfCtrl.'View/';
     $data['process']    = $this->selfCtrl.'EditNameProcess';
     $this->load->view($this->viewDir.'name_form', $data);
@@ -175,15 +181,16 @@ class Emp extends CI_Controller{
   {
     $validOn = $this->input->post('dt_begin');
     $newName = $this->input->post('txt_name');
+    $short   = $this->input->post('txt_short');
     $id      = $this->session->userdata('selectId');
-    $this->EmpModel->ChangeName($id,$newName,$validOn,'9999-12-31');
+    $this->EmpModel->ChangeName($id,$newName,$short,$validOn,'9999-12-31');
     redirect($this->selfCtrl.'View/'.$id.'/'.$validOn.'/9999-12-31');
   }
 
   public function EditRel($relId=0)
   {
     $this->load->helper('form');
-    
+
     $data['hidden']  = array(
       'rel_id' => $relId
     );
@@ -269,6 +276,7 @@ class Emp extends CI_Controller{
     $data['objBegin'] = $obj->begin_date;
     $data['objEnd']   = $obj->end_date;
     $data['objName']  = $attr->name;
+    $data['objShort'] = $attr->short_name;
     $data['editDate'] = $this->selfCtrl.'EditDate/';
     $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
@@ -310,6 +318,7 @@ class Emp extends CI_Controller{
     foreach ($ls as $row) {
       $post[] = array(
         'postRelId' => $row->post_rel_id,
+        'postWeight' => $row->post_weight,
         'postBegin' => $row->post_begin_date,
         'postEnd'   => $row->post_end_date,
         'postId'    => $row->post_id,

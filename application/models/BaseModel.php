@@ -459,6 +459,7 @@ class BaseModel extends CI_Model{
       'rel_code'      => $relCode,
       'obj_top_id'    => $topObjId,
       'obj_bottom_id' => $botObjId,
+      'weight'        => $weight,
       'begin_date'    => $begin,
       'end_date'      => $end,
     );
@@ -477,7 +478,7 @@ class BaseModel extends CI_Model{
    * @param  string    $endDate [yyyy-mm-dd]
    */
 
-  public function ChangeRel($mode='BOTUP',$relCode='',$refId='',$newId='',$validOn='',$endDate='9999-12-31')
+  public function ChangeRel($mode='BOTUP',$relCode='',$refId='',$newId='', $weight= 100,$validOn='',$endDate='9999-12-31')
   {
     if ($validOn == '') {
       $validOn = date('Y-m-d');
@@ -509,6 +510,7 @@ class BaseModel extends CI_Model{
           'obj_top_id'    => $newId,
           'obj_bottom_id' => $refId,
           'rel_code'      => $relCode,
+          'weight'        => $weight,
           'begin_date'    => $validOn,
           'end_date'      => $endDate,
         );
@@ -518,6 +520,7 @@ class BaseModel extends CI_Model{
           'obj_top_id'    => $refId,
           'obj_bottom_id' => $newId,
           'rel_code'      => $relCode,
+          'weight'        => $weight,
           'begin_date'    => $validOn,
           'end_date'      => $endDate,
         );
@@ -1049,6 +1052,7 @@ class BaseModel extends CI_Model{
         if (is_array($alias) && $alias[$i] !='') {
           $this->db->select('rel_'.$i.'.id AS '. $alias[$i].'_rel_id');
           $this->db->select('rel_'.$i.'.obj_top_id AS '. $alias[$i].'_id');
+          $this->db->select('rel_'.$i.'.weight AS '. $alias[$i].'_weight');
           $this->db->select('('.$selectName.') AS '. $alias[$i].'_name');
           $this->db->select('('.$selectShort.') AS '. $alias[$i].'_short_name');
 
@@ -1057,6 +1061,7 @@ class BaseModel extends CI_Model{
         } else {
           $this->db->select('rel_'.$i.'.id AS obj_'. $i.'_rel_id');
           $this->db->select('rel_'.$i.'.obj_top_id AS obj_'. $i.'_id');
+          $this->db->select('rel_'.$i.'.weight AS obj_'. $i.'weight');
           $this->db->select('('.$selectName.') AS obj_'.$i.'_name');
           $this->db->select('('.$selectShort.') AS obj_'.$i.'_short_name');
           $this->db->select('rel_'.$i.'.begin_date AS obj_'. $i.'_begin_date');
@@ -1115,6 +1120,7 @@ class BaseModel extends CI_Model{
       if ($alias !='') {
         $this->db->select('rel_0.id AS '. $alias.'_rel_id');
         $this->db->select('rel_0.obj_top_id AS '. $alias.'_id');
+        $this->db->select('rel_0.weight AS '. $alias.'_weight');
         $this->db->select('rel_0.begin_date AS '. $alias.'_begin_date');
         $this->db->select('rel_0.end_date AS '. $alias.'_end_date');
         $this->db->select('('.$selectName.') AS '. $alias.'_name');
@@ -1122,6 +1128,7 @@ class BaseModel extends CI_Model{
       } else {
         $this->db->select('rel_0.id AS obj_rel_id');
         $this->db->select('rel_0.obj_top_id AS obj_id');
+        $this->db->select('rel_0.weight AS obj_weight');
         $this->db->select('('.$selectName.') AS obj_name');
         $this->db->select('('.$selectShort.') AS obj_short_name');
         $this->db->select('rel_0.begin_date AS obj_begin_date');

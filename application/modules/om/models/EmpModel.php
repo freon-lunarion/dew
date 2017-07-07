@@ -26,42 +26,7 @@ class EmpModel extends CI_Model{
     $this->relJob    = $this->config->item('relJob');
   }
 
-  public function AddPost($persId=0,$postId=0,$beginDate='',$endDate='9999-12-31')
-  {
-    if ($beginDate == '') {
-      $beginDate = date('Y-m-d');
-    }
-    $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$beginDate,$endDate);
-  }
-
-  public function ChangePost($relId=0,$beginDate='',$endDate='9999-12-31')
-  {
-    if ($beginDate == '') {
-      $beginDate = date('Y-m-d');
-    }
-    $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$beginDate,$endDate,$order);
-  }
-
-  public function ChangeName($persId=0,$name='',$short='',$validOn='',$endDate='9999-12-31')
-  {
-    $text = array(
-      'name'  => $name,
-      'short' => $short,
-    );
-    $this->BaseModel->ChangeAttr($persId,$newName,$validOn,$endDate);
-  }
-
-  public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
-  {
-    $this->BaseModel->ChangeRelDate($relId,$beginDate,$endDate);
-  }
-
-  public function CountPost($persId=0,$keyDate='')
-  {
-    return $this->BaseModel->CountBotUpRel($persId,$this->$relHold,$keyDate);
-  }
-
-  public function Create($name='',$short='',$postId=FALSE,$beginDate='',$endDate='9999-12-31')
+  public function Create($name='',$short='',$postId=FALSE,$weight=100,$beginDate='',$endDate='9999-12-31')
   {
     if ($beginDate == '') {
       $beginDate = date('Y-m-d');
@@ -72,7 +37,7 @@ class EmpModel extends CI_Model{
     );
     $persId = $this->BaseModel->Create($this->objType,$text,$beginDate,$endDate);
     if ($postId) {
-      $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$beginDate,$endDate);
+      $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$weight,$beginDate,$endDate);
     }
   }
 
@@ -91,16 +56,25 @@ class EmpModel extends CI_Model{
     return $this->BaseModel->GetByIdRow($id);
   }
 
-  public function GetLastName($objId=0,$keyDate='')
-  {
-    return $this->BaseModel->GetLastAttr($objId,$keyDate);
-  }
-
   public function GetList($beginDate='1990-01-01',$endDate='9999-12-31')
   {
     $keydate['begin'] = $beginDate;
     $keydate['end']   = $endDate;
     return $this->BaseModel->GetList($this->objType,$keydate);
+  }
+
+  public function ChangeName($persId=0,$name='',$short='',$validOn='',$endDate='9999-12-31')
+  {
+    $text = array(
+      'name'  => $name,
+      'short' => $short,
+    );
+    $this->BaseModel->ChangeAttr($persId,$newName,$validOn,$endDate);
+  }
+
+  public function GetLastName($objId=0,$keyDate='')
+  {
+    return $this->BaseModel->GetLastAttr($objId,$keyDate);
   }
 
   public function GetByNameList($name='',$keydate='')
@@ -111,6 +85,32 @@ class EmpModel extends CI_Model{
   public function GetNameHistoryList($objId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($objId,$keyDate,$sort);
+  }
+
+  public function AddPost($persId=0,$postId=0,$weight=100,$beginDate='',$endDate='9999-12-31')
+  {
+    if ($beginDate == '') {
+      $beginDate = date('Y-m-d');
+    }
+    $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$weight,$beginDate,$endDate);
+  }
+
+  public function ChangePost($persId=0,$postId=0,$weight=100,$beginDate='',$endDate='9999-12-31')
+  {
+    if ($beginDate == '') {
+      $beginDate = date('Y-m-d');
+    }
+    $this->BaseModel->CreateRel($this->$relHold,$postId,$persId,$weight,$beginDate,$endDate,$order);
+  }
+
+  public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
+  {
+    $this->BaseModel->ChangeRelDate($relId,$beginDate,$endDate);
+  }
+
+  public function CountPost($persId=0,$keyDate='')
+  {
+    return $this->BaseModel->CountBotUpRel($persId,$this->$relHold,$keyDate);
   }
 
   public function GetPostList($persId=0,$keyDate='',$order = 'asc')

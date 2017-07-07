@@ -10,6 +10,8 @@
       <th>Begin</th>
       <th>End</th>
       <th>Change</th>
+      <th>Weight</th>
+
       <th>Id</th>
       <th>Name</th>
       <th>Supervisor</th>
@@ -22,6 +24,8 @@
         <td>{postBegin}</td>
         <td>{postEnd}</td>
         <td><a href="{chgRel}" class="btn btn-link" title="Change Date">Chg. Date</a>
+          <td>{postWeight}</td>
+
         <td><a href="{viewPost}" class="btn btn-link" title="View Position">{postId}</a></td>
         <td><a href="{viewPost}" class="btn btn-link" title="View Position">{postName}</a></td>
         <td><a href="{sprLink}" class="btn btn-link">View</a></td>
