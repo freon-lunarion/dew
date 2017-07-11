@@ -314,7 +314,7 @@ class Post extends CI_Controller{
     if ($id == '') {
       redirect($this->selfCtrl);
     }
-    $old                = $this->PostModel->GetLastName($id);
+    $old                = $this->PostModel->GetNameRow($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
     $data['short']      = $old->short_name;
@@ -420,7 +420,7 @@ class Post extends CI_Controller{
     $keydate['end']   = $end;
 
     $obj  = $this->PostModel->GetByIdRow($id);
-    $attr = $this->PostModel->GetLastName($id,$keydate);
+    $attr = $this->PostModel->GetNameRow($id,$keydate);
     $data['begin']    = $begin;
     $data['end']      = $end;
     $data['objBegin'] = $obj->begin_date;
@@ -432,7 +432,7 @@ class Post extends CI_Controller{
     $this->parser->parse('_element/obj_detail',$data);
 
 
-    $ls = $this->PostModel->GetNameHistoryList($id,$keydate,'desc');
+    $ls = $this->PostModel->GetNameList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
       if ($attr->id == $row->id) {

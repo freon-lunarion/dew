@@ -26,7 +26,6 @@ class PerspectiveModel extends CI_Model{
 
   public function Delete($perspId='')
   {
-    //Soft Delete
     $this->BaseModel->Delete($perspId);
   }
 
@@ -52,12 +51,12 @@ class PerspectiveModel extends CI_Model{
     return $this->BaseModel->GetByIdRow($perspId);
   }
 
-  public function GetLastName($perspId=0,$keyDate='')
+  public function GetNameRow($perspId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($perspId,$keyDate);
   }
 
-  public function GetNameHistoryList($perspId=0,$keyDate='',$sort)
+  public function GetNameList($perspId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($perspId,$keyDate,$sort);
   }

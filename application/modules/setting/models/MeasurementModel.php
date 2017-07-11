@@ -96,7 +96,7 @@ class MeasurementModel extends CI_Model{
     return $this->BaseModel->GetByIdRow($measId);
   }
 
-  public function GetLastName($measId=0,$keyDate='')
+  public function GetNameRow($measId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($measId,$keyDate);
   }
@@ -106,7 +106,7 @@ class MeasurementModel extends CI_Model{
     return $this->BaseModel->GetLastOn($this->tbl,$measId,'measurement_id',$keyDate);
   }
 
-  public function GetNameHistoryList($measId=0,$keyDate='',$sort)
+  public function GetNameList($measId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($measId,$keyDate,$sort);
   }

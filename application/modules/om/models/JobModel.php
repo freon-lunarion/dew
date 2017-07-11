@@ -74,7 +74,7 @@ class JobModel extends CI_Model{
     return $this->BaseModel->GetByIdRow($id);
   }
 
-  public function GetLastName($objId=0,$keyDate='')
+  public function GetNameRow($objId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($objId,$keyDate);
   }
@@ -86,7 +86,7 @@ class JobModel extends CI_Model{
     return $this->BaseModel->GetList($this->objType,$keydate);
   }
 
-  public function GetNameHistoryList($objId=0,$keyDate='',$sort)
+  public function GetNameList($objId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($objId,$keyDate,$sort);
   }

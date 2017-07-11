@@ -52,8 +52,8 @@ class PostModel extends CI_Model{
 
   public function ChangeManagingOrg($postId=0,$newOrg=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('BotUp',$this->relChief,$postId,$newOrg,40,$validOn,$endDate);
-    $this->BaseModel->ChangeRel('BotUp',$this->relAssign,$postId,$newOrg,60,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relChief,$postId,$newOrg,$this->config->item('relWeightChiefOrg'),$validOn,$endDate);
+    $this->BaseModel->ChangeRel('BotUp',$this->relAssign,$postId,$newOrg,$this->config->item('relWeightChiefPos'),$validOn,$endDate);
   }
 
   public function ChangeRelDate($relId=0,$beginDate='',$endDate='')
@@ -132,8 +132,8 @@ class PostModel extends CI_Model{
 
     $this->BaseModel->CreateRel($this->relReport,$reportTo,$postId,100,$beginDate,$endDate);
     if ($isChief) {
-      $this->BaseModel->CreateRel($this->relChief,$orgId,$postId, 40,$beginDate,$endDate);
-      $weight = 60;
+      $this->BaseModel->CreateRel($this->relChief,$orgId,$postId, $this->config->item('relWeightChiefOrg'),$beginDate,$endDate);
+      $weight = $this->config->item('relWeightChiefPos');
     } else {
       $weight = 100;
     }
@@ -192,7 +192,7 @@ class PostModel extends CI_Model{
 
   }
 
-  public function GetLastName($postId=0,$keyDate='')
+  public function GetNameRow($postId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($postId,$keyDate);
   }
@@ -252,7 +252,7 @@ class PostModel extends CI_Model{
     return $this->BaseModel->GetBotUpRelList($postId,$this->relChief,$keyDate,'org');
   }
 
-  public function GetNameHistoryList($postId=0,$keyDate='')
+  public function GetNameList($postId=0,$keyDate='')
   {
     return $this->BaseModel->GetAttrList($postId,$keyDate);
   }

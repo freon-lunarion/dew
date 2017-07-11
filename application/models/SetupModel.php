@@ -63,6 +63,43 @@ class SetupModel extends CI_Model{
     $this->dbforge->create_table($this->config->item('tblRefRel'),TRUE,$this->attributes);
 
     // -------------------------------------------
+
+
+    // Table Ref Status
+    $fields = array(
+      'code' => array(
+        'type'       =>'VARCHAR',
+        'constraint' => '5',
+        'default'    => '',
+      ),
+      'name' => array(
+        'type'       =>'VARCHAR',
+        'constraint' => '30',
+        'default'    => '',
+      ),
+    );
+    $this->dbforge->add_field($fields);
+    $this->dbforge->add_key('code', TRUE);
+    $this->dbforge->create_table($this->config->item('tblRefStat'),TRUE,$this->attributes);
+    $data = array(
+      array(
+        'code' => $this->config->item('statDraf'),
+        'name' => 'Draf',
+      ),
+      array(
+        'code' => $this->config->item('statPending'),
+        'name' => 'Pending',
+      ),
+      array(
+        'code' => $this->config->item('statReject'),
+        'name' => 'Rejecte',
+      ),
+      array(
+        'code' => $this->config->item('statApprove'),
+        'name' => 'Approve',
+      ),
+    );
+    $this->db->insert_batch($this->config->item('tblRefStat'), $data);
   }
 
   public function CreateTables()
@@ -193,6 +230,7 @@ class SetupModel extends CI_Model{
     $this->dbforge->drop_table($this->config->item('tblObj'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblRefObj'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblRefRel'),TRUE);
+    $this->dbforge->drop_table($this->config->item('tblRefStat'),TRUE);
 
   }
 

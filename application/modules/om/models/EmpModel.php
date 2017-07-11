@@ -72,7 +72,7 @@ class EmpModel extends CI_Model{
     $this->BaseModel->ChangeAttr($persId,$newName,$validOn,$endDate);
   }
 
-  public function GetLastName($objId=0,$keyDate='')
+  public function GetNameRow($objId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($objId,$keyDate);
   }
@@ -82,7 +82,7 @@ class EmpModel extends CI_Model{
     return $this->BaseModel->GetByNameList($name,$keydate,$this->objType);
   }
 
-  public function GetNameHistoryList($objId=0,$keyDate='',$sort)
+  public function GetNameList($objId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($objId,$keyDate,$sort);
   }

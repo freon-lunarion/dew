@@ -59,7 +59,7 @@ class Ajax extends CI_Controller{
     // Children of Organization
     if ($orgId ==0 ) {
       $row = $this->OrgModel->GetByIdRow(1,$date);
-      $name = $this->OrgModel->GetLastName(1,$date);
+      $name = $this->OrgModel->GetNameRow(1,$date);
       $data['org'][0] = array(
         'id'    => $row->id,
         'begda' => $row->begin_date,

@@ -27,8 +27,8 @@ class OrgModel extends CI_Model{
 
   public function ChangeChiefPost($orgId,$newPost=0,$validOn='',$endDate='9999-12-31')
   {
-    $this->BaseModel->ChangeRel('TOPDOWN',$this->relChief,$orgId,$newPost,40,$validOn,$endDate);
-    $this->BaseModel->ChangeRel('TOPDOWN',$this->relAssign,$orgId,$newPost,60,$validOn,$endDate);
+    $this->BaseModel->ChangeRel('TOPDOWN',$this->relChief,$orgId,$newPost,$this->config->item('relWeightChiefOrg'),$validOn,$endDate);
+    $this->BaseModel->ChangeRel('TOPDOWN',$this->relAssign,$orgId,$newPost,$this->config->item('relWeightChiefPos'),$validOn,$endDate);
   }
 
   public function ChangeName($orgId=0,$name='',$short,$validOn='',$endDate='9999-12-31')
@@ -160,7 +160,7 @@ class OrgModel extends CI_Model{
     return $this->BaseModel->GetLastTopDownRel($orgId,$this->relChief,$keyDate,'post');
   }
 
-  public function GetLastName($orgId=0,$keyDate='')
+  public function GetNameRow($orgId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($orgId,$keyDate);
   }
@@ -172,7 +172,7 @@ class OrgModel extends CI_Model{
     return $this->BaseModel->GetList($this->objType,$keydate);
   }
 
-  public function GetNameHistoryList($orgId=0,$keyDate='')
+  public function GetNameList($orgId=0,$keyDate='')
   {
     return $this->BaseModel->GetAttrList($orgId,$keyDate);
   }
@@ -209,7 +209,7 @@ class OrgModel extends CI_Model{
   public function GetStruct($objId=0,$keydate=array())
   {
     $obj  = $this->GetByIdRow($objId,$keydate);
-    $attr = $this->GetLastName($objId,$keydate);
+    $attr = $this->GetNameRow($objId,$keydate);
     $result = array();
     if ($objId > 0) {
       $result[0] = array(

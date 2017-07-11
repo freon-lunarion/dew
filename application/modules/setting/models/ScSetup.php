@@ -41,33 +41,33 @@ class ScSetup extends CI_Model{
     $this->db->insert_batch($this->config->item('tblRefObj'), $data);
     $data = array(
       array(
-        'code'        => $this->config->item('relScJob'),
-        'top'         => $this->config->item('objSC'),
-        'bottom'      => $this->config->item('objJob'),
+        'code'        => $this->config->item('relJobSc'),
+        'top'         => $this->config->item('objJob'),
+        'bottom'      => $this->config->item('objSC'),
         'description' => 'ScoreCard of Job (Template)',
       ),
       array(
-        'code'        => $this->config->item('relScOrg'),
-        'top'         => $this->config->item('objSC'),
-        'bottom'      => $this->config->item('objOrg'),
+        'code'        => $this->config->item('relOrgSc'),
+        'top'         => $this->config->item('objOrg'),
+        'bottom'      => $this->config->item('objSC'),
         'description' => 'ScoreCard of Organization',
       ),
       array(
-        'code'        => $this->config->item('relScPos'),
-        'top'         => $this->config->item('objSC'),
-        'bottom'      => $this->config->item('objPost'),
+        'code'        => $this->config->item('relPosSc'),
+        'top'         => $this->config->item('objPost'),
+        'bottom'      => $this->config->item('objSC'),
         'description' => 'ScoreCard of Position',
       ),
       array(
-        'code'        => $this->config->item('relSoSc'),
-        'top'         => $this->config->item('objSO'),
-        'bottom'      => $this->config->item('objSC'),
+        'code'        => $this->config->item('relScSo'),
+        'top'         => $this->config->item('objSC'),
+        'bottom'      => $this->config->item('objSO'),
         'description' => 'Strategic Objective related with ScoreCard',
       ),
       array(
-        'code'        => $this->config->item('relSoPer'),
-        'top'         => $this->config->item('objSO'),
-        'bottom'      => $this->config->item('objPersp'),
+        'code'        => $this->config->item('relPerSo'),
+        'top'         => $this->config->item('objPersp'),
+        'bottom'      => $this->config->item('objSO'),
         'description' => 'Strategic Objective related with Perspective',
       ),
       array(
@@ -232,6 +232,26 @@ class ScSetup extends CI_Model{
     $this->dbforge->create_table($this->config->item('tblYtd'),TRUE,$this->attributes);
 
     // -------------------------------------------------------------------------
+
+    $scFields = array(
+      'sc_id' => array(
+        'type'       => 'INT',
+        'constraint' => 11,
+        'unsigned'   => TRUE,
+        'after'      => 'id'
+      ),
+      'status_code' => array(
+        'type'       => 'VARCHAR',
+        'constraint' => 10,
+        'after'      => 'sc_id'
+      ),
+    );
+    $this->dbforge->add_field($genField);
+    $this->dbforge->add_key('id', TRUE);
+    $this->dbforge->create_table($this->config->item('tblScStatus'),TRUE,$this->attributes);
+    $this->dbforge->add_column($this->config->item('tblScStatus'),$scFields);
+    // -------------------------------------------------------------------------
+
     // KPI Attr
     $kpiFields = array(
       'kpi_id' => array(
@@ -683,6 +703,8 @@ class ScSetup extends CI_Model{
     $this->dbforge->drop_table($this->config->item('tblScoreMain'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblMeasure'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblYtd'),TRUE);
+    $this->dbforge->drop_table($this->config->item('tblScStatus'),TRUE);
+
 
     $this->dbforge->drop_table($this->config->item('tblKpi'),TRUE);
     $this->dbforge->drop_table($this->config->item('tblTargetD'),TRUE);

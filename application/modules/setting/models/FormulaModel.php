@@ -93,7 +93,7 @@ class FormulaModel extends CI_Model{
     return $this->BaseModel->GetByIdRow($formulaId);
   }
 
-  public function GetLastName($formulaId=0,$keyDate='')
+  public function GetNameRow($formulaId=0,$keyDate='')
   {
     return $this->BaseModel->GetLastAttr($formulaId,$keyDate);
   }
@@ -103,7 +103,7 @@ class FormulaModel extends CI_Model{
     return $this->BaseModel->GetLastOn($this->tbl,$formulaId,'formula_id',$keyDate);
   }
 
-  public function GetNameHistoryList($formulaId=0,$keyDate='',$sort)
+  public function GetNameList($formulaId=0,$keyDate='',$sort)
   {
     return $this->BaseModel->GetAttrList($formulaId,$keyDate,$sort);
   }

@@ -113,7 +113,7 @@ class Perspective extends CI_Controller{
     if ($id == '') {
       redirect($this->selfCtrl);
     }
-    $old = $this->MainModel->GetLastName($id);
+    $old = $this->MainModel->GetNameRow($id);
     $data = array(
       'begin'      => date('Y-m-d'),
       'name'       => $old->name,
@@ -215,7 +215,7 @@ class Perspective extends CI_Controller{
 
     $obj  = $this->MainModel->GetByIdRow($id);
     if ($obj) {
-      $attr = $this->MainModel->GetLastName($id,$keydate);
+      $attr = $this->MainModel->GetNameRow($id,$keydate);
       $data['objBegin'] = $obj->begin_date;
       $data['objEnd']   = $obj->end_date;
       $data['objName']  = $attr->name;
@@ -224,7 +224,7 @@ class Perspective extends CI_Controller{
     }
     $this->parser->parse('_element/obj_detail',$data);
 
-    $ls = $this->MainModel->GetNameHistoryList($id,$keydate,'desc');
+    $ls = $this->MainModel->GetNameList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
       if ($attr->id == $row->id) {

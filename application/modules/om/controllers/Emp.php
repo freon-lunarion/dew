@@ -167,7 +167,7 @@ class Emp extends CI_Controller{
     if ($id == '') {
       redirect($this->selfCtrl);
     }
-    $old                = $this->EmpModel->GetLastName($id);
+    $old                = $this->EmpModel->GetNameRow($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
     $data['short']      = $old->short_name;
@@ -242,8 +242,8 @@ class Emp extends CI_Controller{
     $keydate['begin'] = $this->session->userdata('filterBegDa');
     $keydate['end']   = $this->session->userdata('filterEndDa');
     $persObj = $this->EmpModel->GetByIdRow($rel->obj_bottom_id,$keydate);
-    $persAtr = $this->EmpModel->GetLastName($rel->obj_bottom_id,$keydate);
-    $postAtr = $this->PostModel->GetLastName($rel->obj_top_id,$keydate);
+    $persAtr = $this->EmpModel->GetNameRow($rel->obj_bottom_id,$keydate);
+    $postAtr = $this->PostModel->GetNameRow($rel->obj_top_id,$keydate);
 
     $sprPost = $this->PostModel->GetReportTo($rel->obj_top_id,$keydate);
     $sprPers = $this->PostModel->GetLastHolder($sprPost->post_id,$keydate);
@@ -271,7 +271,7 @@ class Emp extends CI_Controller{
     $keydate['begin'] = $begin;
     $keydate['end']   = $end;
     $obj  = $this->EmpModel->GetByIdRow($id);
-    $attr = $this->EmpModel->GetLastName($id,$keydate);
+    $attr = $this->EmpModel->GetNameRow($id,$keydate);
 
     $data['objBegin'] = $obj->begin_date;
     $data['objEnd']   = $obj->end_date;
@@ -281,7 +281,7 @@ class Emp extends CI_Controller{
     $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
-    $ls =  $this->EmpModel->GetNameHistoryList($id,$keydate,'desc');
+    $ls =  $this->EmpModel->GetNameList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
       if ($attr->id == $row->id) {

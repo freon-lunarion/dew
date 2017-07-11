@@ -142,7 +142,7 @@ class Org extends CI_Controller{
     if ($id == '') {
       redirect($this->selfCtrl);
     }
-    $old                = $this->OrgModel->GetLastName($id);
+    $old                = $this->OrgModel->GetNameRow($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
     $data['short']      = $old->short_name;
@@ -269,7 +269,7 @@ class Org extends CI_Controller{
     $keydate['end']   = $end;
 
     $obj  = $this->OrgModel->GetByIdRow($id);
-    $attr = $this->OrgModel->GetLastName($id,$keydate);
+    $attr = $this->OrgModel->GetNameRow($id,$keydate);
     $data['begin']    = $begin;
     $data['end']      = $end;
     $data['objBegin'] = $obj->begin_date;
@@ -282,7 +282,7 @@ class Org extends CI_Controller{
     $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
-    $ls = $this->OrgModel->GetNameHistoryList($id,$keydate,'desc');
+    $ls = $this->OrgModel->GetNameList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
       if ($attr->id == $row->id) {
@@ -346,7 +346,7 @@ class Org extends CI_Controller{
 
     } else {
       $row = $this->OrgModel->GetByIdRow(1,$date);
-      $name = $this->OrgModel->GetLastName(1,$date);
+      $name = $this->OrgModel->GetNameRow(1,$date);
       $data['rows'][0] = array(
         'id'       => $row->id,
         'begda'    => $row->begin_date,

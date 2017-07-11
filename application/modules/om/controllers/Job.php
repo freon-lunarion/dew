@@ -126,7 +126,7 @@ class Job extends CI_Controller{
     if ($id == '') {
       redirect($this->selfCtrl);
     }
-    $old                = $this->JobModel->GetLastName($id);
+    $old                = $this->JobModel->GetNameRow($id);
     $data['begin']      = date('Y-m-d');
     $data['name']       = $old->name;
     $data['short']      = $old->short_name;
@@ -208,7 +208,7 @@ class Job extends CI_Controller{
     );
     $obj  = $this->JobModel->GetByIdRow($id);
     if ($obj) {
-      $attr = $this->JobModel->GetLastName($id,$keydate);
+      $attr = $this->JobModel->GetNameRow($id,$keydate);
       $data = array(
         'objBegin' => $obj->begin_date,
         'objEnd'   => $obj->end_date,
@@ -223,7 +223,7 @@ class Job extends CI_Controller{
     $data['editName'] = $this->selfCtrl.'EditName/';
     $this->parser->parse('_element/obj_detail',$data);
 
-    $ls =  $this->JobModel->GetNameHistoryList($id,$keydate,'desc');
+    $ls =  $this->JobModel->GetNameList($id,$keydate,'desc');
     $history = array();
     foreach ($ls as $row) {
       if ($attr->id == $row->id) {
